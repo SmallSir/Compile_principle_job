@@ -37,10 +37,8 @@ int main()
 		cin>>ch;
 		prog[++p] = ch;
 	} while (ch != '#');
-	getchar();
-	getchar();
-	cout<<"选择文件输出1还是控制台输出2??"<<endl;
 	int y;
+	cout<<"文件输出1,后台输出2"<<endl;
 	cin>>y;
 	p = 0;
 	if(y==1)
@@ -102,7 +100,19 @@ void check()
 }
 void DFA()
 {
-	if((ch <= '9' && ch >= '1')||ch == '+'||ch == '-')
+	if(ch == '+' || ch == '-')
+	{
+		token[m++] = ch;
+		ch = prog[++p];
+	}
+	if(ch == '0' && prog[p + 1] == '.')
+	{
+		token[m++] = ch;
+		ch = prog[++p];
+		token[m++] = ch;
+		ch = prog[++p];
+	}
+	if((ch <= '9' && ch >= '1'))
 	{
 		token[m++] = ch;
 		ch = prog[++p];
@@ -177,6 +187,7 @@ void DFA()
 }
 void scaner()
 {
+	int flow;
 	// 初始化 token 数组
 	memset(token,0,sizeof(token));
 	// 跳过空格字符
@@ -277,12 +288,14 @@ void scaner()
 			}
 			break;
 		case '+':
+			//int flow = syn;
+			flow = syn;
 			syn = 13; 
 			m = 0;
 			token[m++] = ch;
 			ch = prog[++p];
 			flag = 0;
-			if(ch <= '9' && ch >= '0')
+			if(ch <= '9' && ch >= '0' && flow != 11)
 			{
 				syn = 11;
 				DFA();
@@ -291,12 +304,13 @@ void scaner()
 				ch = prog[--p];
 			break;
 		case '-': 
+			flow = syn;
 			syn = 14;
 			m = 0;
 			token[m++] = ch;
 			ch = prog[++p];
 			flag = 0;
-			if(ch <= '9' && ch >= '0')
+			if(ch <= '9' && ch >= '0' && flow != 11)
 			{
 				syn = 11;
 				DFA();
