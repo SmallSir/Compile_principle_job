@@ -35,17 +35,17 @@ int main()
 	if(x==1)
 	{
 		fp1 = fopen("in.txt","r");
-			do {
+		do {
 			fscanf(fp1, "%c", &ch);
 			prog[++p] = ch;
 		} while (ch != '#');
-	
+
 	}
 	else
 	{do {
-		scanf("%c",&ch);
-		prog[++p] = ch;
-	} while (ch != '#');
+			scanf("%c",&ch);
+			prog[++p] = ch;
+		} while (ch != '#');
 	}
 	p = 0;
 	if(y==2)
@@ -114,23 +114,47 @@ void check()
 			ch = prog[++p];
 		}
 	}
+	if(ch <= 'z' && ch >= 'a'||token[m-1] == '-'|| token[m-1] == '+')
+	{
+		syn = -1;
+		ch = prog[++p];
+		while((ch <= '9 '&& ch >= '0')||(ch <= 'z' && ch >= 'a')||ch == '.')
+		{
+			ch = prog[++p];
+		}
+		ch = prog[--p];
+		return;
+	}
 	ch = prog[--p];
 }
 void DFA()
 {
-		
+
 	if(ch == '+' || ch == '-')
- 	{
- 		token[m++] = ch;
-		ch = prog[++p];
- 	}
- 	if(ch == '0' && prog[p + 1] == '.')
- 	{
- 		token[m++] = ch;
- 		ch = prog[++p];
+	{
 		token[m++] = ch;
- 		ch = prog[++p];
- 	}	
+		ch = prog[++p];
+	}
+	if(ch == '0')
+	{
+		if(prog[p+1] == '.')
+		{token[m++] = ch;
+			ch = prog[++p];
+			token[m++] = ch;
+			ch = prog[++p];
+		}
+		else
+		{
+			syn = -1;
+			ch = prog[++p];
+			while((ch <= '9 '&& ch >= '0')||(ch <= 'z' && ch >= 'a')||ch == '.')
+			{
+				ch = prog[++p];
+			}
+			ch = prog[--p];
+			return;
+		}
+	}	
 	while((ch <= '9' && ch >= '0')||ch == '.')
 	{
 		if(ch == '.')
@@ -172,7 +196,7 @@ void DFA()
 	}
 	else
 	{
-		if(token[m-1] == '.')
+		if(token[m-1] == '.'||ch <= 'z' && ch >= 'a')
 		{
 			syn = -1;
 			while((ch <= '9 '&& ch >= '0')||(ch <= 'z' && ch >= 'a')||ch == '.')
@@ -192,7 +216,7 @@ void DFA()
 void scaner()
 {
 	// 初始化 token 数组
-	int flow;
+	int flow = 11;
 	memset(token,0,sizeof(token));
 	// 跳过空格字符
 	ch = prog[++p];
@@ -211,7 +235,7 @@ void scaner()
 			token[m++] = ch;
 			ch = prog[++p];
 		}
-		
+
 		ch = prog[--p];
 		syn = 10;//若输出是10则是变量或是正整数
 		// 判断是否匹配关键字
@@ -235,120 +259,120 @@ void scaner()
 	{
 		switch (ch)
 		{
-		case'<':
-			m = 0;
-			token[m++] = ch;
-			ch = prog[++p];
-			if (ch == '=')
-			{
-				syn = 21;
-				token[m ++] = ch;
-			}
-			else {
-				syn = 20;
-				ch = prog[--p];
-			}
-			break;
-		case'>':
-			m = 0;
-			token[m++] = ch;
-			ch = prog[++p];
-			if (ch == '=')
-			{
-				syn = 24;
+			case'<':
+				m = 0;
 				token[m++] = ch;
-			}
-			else
-			{
-				syn = 23;
-				ch = prog[--p];
-			}
-			break;
-		case'=':
-			m = 0; 
-			token[m++] = ch;
-			ch = prog[++p];
-			if (ch == '=')
-			{
-				syn = 25;
+				ch = prog[++p];
+				if (ch == '=')
+				{
+					syn = 21;
+					token[m ++] = ch;
+				}
+				else {
+					syn = 20;
+					ch = prog[--p];
+				}
+				break;
+			case'>':
+				m = 0;
 				token[m++] = ch;
-			}
-			else
-			{
-				syn = 18;
-				ch = prog[--p];
-			}
-			break;
-		case '!':
-			m = 0;
-			token[m++] = ch;
-			ch = prog[++p];
-			if (ch == '=')
-			{
-				syn = 22;
+				ch = prog[++p];
+				if (ch == '=')
+				{
+					syn = 24;
+					token[m++] = ch;
+				}
+				else
+				{
+					syn = 23;
+					ch = prog[--p];
+				}
+				break;
+			case'=':
+				m = 0; 
 				token[m++] = ch;
-			}
-			else
-			{
+				ch = prog[++p];
+				if (ch == '=')
+				{
+					syn = 25;
+					token[m++] = ch;
+				}
+				else
+				{
+					syn = 18;
+					ch = prog[--p];
+				}
+				break;
+			case '!':
+				m = 0;
+				token[m++] = ch;
+				ch = prog[++p];
+				if (ch == '=')
+				{
+					syn = 22;
+					token[m++] = ch;
+				}
+				else
+				{
+					syn = -1;
+				}
+				break;
+			case '+':
+				flow = syn;
+				syn = 13; 
+				m = 0;
+				token[m++] = ch;
+				ch = prog[++p];
+				flag = 0;
+				if(ch <= '9' && ch >= '0' &&( flow != 11 || flow != 10))
+				{
+					syn = 11;
+					DFA();
+				}
+				else
+					ch = prog[--p];
+				break;
+			case '-': 
+				flow = syn;
+				syn = 14;
+				m = 0;
+				token[m++] = ch;
+				ch = prog[++p];
+				flag = 0;
+				if(ch <= '9' && ch >= '0' && (flow != 11 || flow !=10))
+				{
+					syn = 11;
+					DFA();
+				}
+				else
+					ch = prog[--p];
+				break;
+			case '*': 
+				syn = 15; 
+				token[0] = ch; 
+				break;
+			case '/': 
+				syn = 16; 
+				token[0] = ch;
+				break;
+			case ';': 
+				syn = 26; 
+				token[0] = ch; 
+				break;
+			case '(': 
+				syn = 27; 
+				token[0] = ch; 
+				break;
+			case ')': 
+				syn = 28; 
+				token[0] = ch; 
+				break;
+			case '#': 
+				syn = 0; 
+				token[0] = ch;
+				break;
+			default:
 				syn = -1;
-			}
-			break;
-		case '+':
-			flow = syn;
-			syn = 13; 
-			m = 0;
-			token[m++] = ch;
-			ch = prog[++p];
-			flag = 0;
-			if(ch <= '9' && ch >= '0' && flow != 11)
-			{
-				syn = 11;
-				DFA();
-			}
-			else
-				ch = prog[--p];
-			break;
-		case '-': 
-			flow = syn;
-			syn = 14;
-			m = 0;
-			token[m++] = ch;
-			ch = prog[++p];
-			flag = 0;
-			if(ch <= '9' && ch >= '0' && flow != 11)
-			{
-				syn = 11;
-				DFA();
-			}
-			else
-				ch = prog[--p];
-			break;
-		case '*': 
-			syn = 15; 
-			token[0] = ch; 
-			break;
-		case '/': 
-			syn = 16; 
-			token[0] = ch;
-			break;
-		case ';': 
-			syn = 26; 
-			token[0] = ch; 
-			break;
-		case '(': 
-			syn = 27; 
-			token[0] = ch; 
-			break;
-		case ')': 
-			syn = 28; 
-			token[0] = ch; 
-			break;
-		case '#': 
-			syn = 0; 
-			token[0] = ch;
-			break;
-		default:
-			syn = -1;
 		}
 	}
 }
