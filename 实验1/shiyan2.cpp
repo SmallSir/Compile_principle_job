@@ -19,7 +19,7 @@ char ch;
 bool flag;
 int syn, p, m, n, sum;
 char* rwtab[6] = { "function","if","then","while","do", "endfunc" };
-FILE* fp1, *fp2;
+
 void scaner();
 
 int main()
@@ -29,26 +29,25 @@ int main()
 	cout<<"选择文件输入1,手动输入2??"<<endl;
 	int x;
 	cin>>x;
-	cout<<"选择文件输出1还是控制台输出2??"<<endl;
-	int y;
-	cin>>y;
 	if(x==1)
 	{
-		fp1 = fopen("in.txt","r");
-			do {
-			fscanf(fp1, "%c", &ch);
-			prog[++p] = ch;
-		} while (ch != '#');
-	
+		freopen("in.txt","r",stdin);
 	}
-	else
-	{do {
+	do {
 		cin>>ch;
 		prog[++p] = ch;
 	} while (ch != '#');
-	}
+	getchar();
+	getchar();
+	cout<<"选择文件输出1还是控制台输出2??"<<endl;
+	int y;
+	cin>>y;
 	p = 0;
-	if(y==2)
+	if(y==1)
+	{
+		freopen("out.txt","w",stdout);
+	}
+	else
 	{
 		do
 		{
@@ -61,21 +60,6 @@ int main()
 			}
 		} while (syn != 0);
 		printf("\n");
-	}
-	else if(y==1)
-	{
-		fp2 = fopen("out.txt","w");
-		do
-		{
-			scaner();
-			switch (syn)
-			{
-				case 11: fprintf(fp2,"\n(%d, %s)", syn, token); break;
-				case -1: fprintf(fp2,"\n error"); break;
-				default: fprintf(fp2,"\n(%d, %s)", syn, token);//关键字变量
-			}
-		} while (syn != 0);
-		fprintf(fp2,"\n");
 	}
 }
 void check()
@@ -241,7 +225,7 @@ void scaner()
 			if (ch == '=')
 			{
 				syn = 21;
-				token[m ++] = ch;
+				token[m + 1] = ch;
 			}
 			else {
 				syn = 20;
