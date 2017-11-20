@@ -43,7 +43,7 @@ int main()
 	}
 	else
 	{do {
-		cin>>ch;
+		scanf("%c",&ch);
 		prog[++p] = ch;
 	} while (ch != '#');
 	}
@@ -197,7 +197,9 @@ void scaner()
 	// 跳过空格字符
 	ch = prog[++p];
 	while (ch == ' ' || ch == '\n' || ch == '\t') 
+	{
 		ch = prog[++p];
+	}
 	// 读到了字母
 	//cout<<endl<<ch<<endl;
 	if (ch >= 'a' && ch <= 'z')
