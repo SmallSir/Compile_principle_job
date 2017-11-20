@@ -19,7 +19,7 @@ char ch;
 bool flag;
 int syn, p, m, n, sum;
 char* rwtab[6] = { "function","if","then","while","do", "endfunc" };
-
+FILE* fp1, *fp2;
 void scaner();
 
 int main()
@@ -29,23 +29,26 @@ int main()
 	cout<<"选择文件输入1,手动输入2??"<<endl;
 	int x;
 	cin>>x;
+	cout<<"选择文件输出1还是控制台输出2??"<<endl;
+	int y;
+	cin>>y;
 	if(x==1)
 	{
-		freopen("in.txt","r",stdin);
+		fp1 = fopen("in.txt","r");
+			do {
+			fscanf(fp1, "%c", &ch);
+			prog[++p] = ch;
+		} while (ch != '#');
+	
 	}
-	do {
+	else
+	{do {
 		cin>>ch;
 		prog[++p] = ch;
 	} while (ch != '#');
-	int y;
-	cout<<"文件输出1,后台输出2"<<endl;
-	cin>>y;
-	p = 0;
-	if(y==1)
-	{
-		freopen("out.txt","w",stdout);
 	}
-	else
+	p = 0;
+	if(y==2)
 	{
 		do
 		{
@@ -58,6 +61,21 @@ int main()
 			}
 		} while (syn != 0);
 		printf("\n");
+	}
+	else if(y==1)
+	{
+		fp2 = fopen("out.txt","w");
+		do
+		{
+			scaner();
+			switch (syn)
+			{
+				case 11: fprintf(fp2,"\n(%d, %s)", syn, token); break;
+				case -1: fprintf(fp2,"\n error"); break;
+				default: fprintf(fp2,"\n(%d, %s)", syn, token);//关键字变量
+			}
+		} while (syn != 0);
+		fprintf(fp2,"\n");
 	}
 }
 void check()
@@ -100,33 +118,19 @@ void check()
 }
 void DFA()
 {
+		
 	if(ch == '+' || ch == '-')
-	{
-		token[m++] = ch;
+ 	{
+ 		token[m++] = ch;
 		ch = prog[++p];
-	}
-	if(ch == '0' && prog[p + 1] == '.')
-	{
+ 	}
+ 	if(ch == '0' && prog[p + 1] == '.')
+ 	{
+ 		token[m++] = ch;
+ 		ch = prog[++p];
 		token[m++] = ch;
-		ch = prog[++p];
-		token[m++] = ch;
-		ch = prog[++p];
-	}
-	if((ch <= '9' && ch >= '1'))
-	{
-		token[m++] = ch;
-		ch = prog[++p];
-	}
-	else
-	{
-		syn = -1;
-		while((ch <= '9 '&& ch >= '0')||(ch <= 'z' && ch >= 'a')||ch == '.')
-		{
-			ch = prog[++p];
-		}
-		ch = prog[--p];
-		return;
-	}
+ 		ch = prog[++p];
+ 	}	
 	while((ch <= '9' && ch >= '0')||ch == '.')
 	{
 		if(ch == '.')
@@ -187,8 +191,8 @@ void DFA()
 }
 void scaner()
 {
-	int flow;
 	// 初始化 token 数组
+	int flow;
 	memset(token,0,sizeof(token));
 	// 跳过空格字符
 	ch = prog[++p];
@@ -236,7 +240,7 @@ void scaner()
 			if (ch == '=')
 			{
 				syn = 21;
-				token[m + 1] = ch;
+				token[m ++] = ch;
 			}
 			else {
 				syn = 20;
@@ -288,7 +292,6 @@ void scaner()
 			}
 			break;
 		case '+':
-			//int flow = syn;
 			flow = syn;
 			syn = 13; 
 			m = 0;
