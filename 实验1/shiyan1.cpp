@@ -216,7 +216,7 @@ void DFA()
 void scaner()
 {
 	// 初始化 token 数组
-	int flow = 0;
+	int flow;
 	memset(token,0,sizeof(token));
 	// 跳过空格字符
 	ch = prog[++p];
@@ -224,6 +224,7 @@ void scaner()
 	{
 		ch = prog[++p];
 	}
+	flow = 0;
 	// 读到了字母
 	//cout<<endl<<ch<<endl;
 	if (ch >= 'a' && ch <= 'z')
@@ -332,7 +333,7 @@ void scaner()
 				else
 					ch = prog[--p];
 				break;
-			case '-': 
+			case '-':
 				flow = syn;
 				syn = 14;
 				m = 0;
