@@ -1,10 +1,22 @@
-﻿#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-
+﻿#define _CRT_SECURE_NO_WARNINGS
+#include <cstdio>
+#include <cstring>
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <queue>
+#include <set>
+#include <map>
+#include <string>
+#include <cmath>
+#include <cstdlib>
+#include <ctime>
+using namespace std;
 char prog[80], token[9];
 char ch;
 int syn, p, m = 0, n, sum, kk = 0;
+int y;
+FILE* fp1, *fp2;
 char * rwtab[6] = { "function", "if", "then", "while", "do", "endfunc" };
 
 void yucu();
@@ -50,74 +62,74 @@ void scaner()
 	{
 		switch (ch)
 		{
-		case'<':
-			m = 0;
-			token[m++] = ch;
-			ch = prog[p++];
-			if (ch == '=')
-			{
-				syn = 22;
-				token[m + 1] = ch;
-			}
-			else {
-				syn = 20;
-				ch = prog[p--];
-			}
-			break;
-		case'>':
-			m = 0;
-			token[m++] = ch;
-			ch = prog[p++];
-			if (ch == '=')
-			{
-				syn = 24;
+			case'<':
+				m = 0;
 				token[m++] = ch;
-			}
-			else
-			{
-				syn = 23;
-				ch = prog[p--];
-			}
-			break;
-		case'=':
-			m = 0;
-			token[m++] = ch;
-			ch = prog[p++];
-			if (ch == '=')
-			{
-				syn = 25;
+				ch = prog[p++];
+				if (ch == '=')
+				{
+					syn = 22;
+					token[m + 1] = ch;
+				}
+				else {
+					syn = 20;
+					ch = prog[p--];
+				}
+				break;
+			case'>':
+				m = 0;
 				token[m++] = ch;
-			}
-			else
-			{
-				syn = 18;
-				ch = prog[p--];
-			}
-			break;
-		case '!':
-			m = 0;
-			token[m++] = ch;
-			ch = prog[p++];
-			if (ch == '=')
-			{
-				syn = 22;
+				ch = prog[p++];
+				if (ch == '=')
+				{
+					syn = 24;
+					token[m++] = ch;
+				}
+				else
+				{
+					syn = 23;
+					ch = prog[p--];
+				}
+				break;
+			case'=':
+				m = 0;
 				token[m++] = ch;
-			}
-			else
-			{
-				syn = -1;
-			}
-			break;
-		case '+': syn = 13; token[0] = ch; break;
-		case '-': syn = 14; token[0] = ch; break;
-		case '*': syn = 15; token[0] = ch; break;
-		case '/': syn = 16; token[0] = ch; break;
-		case ';': syn = 26; token[0] = ch; break;
-		case '(': syn = 27; token[0] = ch; break;
-		case ')': syn = 28; token[0] = ch; break;
-		case '#': syn = 0; token[0] = ch; break;
-		default:
-			syn = -1;
+				ch = prog[p++];
+				if (ch == '=')
+				{
+					syn = 25;
+					token[m++] = ch;
+				}
+				else
+				{
+					syn = 18;
+					ch = prog[p--];
+				}
+				break;
+			case '!':
+				m = 0;
+				token[m++] = ch;
+				ch = prog[p++];
+				if (ch == '=')
+				{
+					syn = 22;
+					token[m++] = ch;
+				}
+				else
+				{
+					syn = -1;
+				}
+				break;
+			case '+': syn = 13; token[0] = ch; break;
+			case '-': syn = 14; token[0] = ch; break;
+			case '*': syn = 15; token[0] = ch; break;
+			case '/': syn = 16; token[0] = ch; break;
+			case ';': syn = 26; token[0] = ch; break;
+			case '(': syn = 27; token[0] = ch; break;
+			case ')': syn = 28; token[0] = ch; break;
+			case '#': syn = 0; token[0] = ch; break;
+			default:
+					  syn = -1;
 		}
 		ch = prog[p++];
 	}
@@ -139,14 +151,28 @@ void lrparser()
 		{
 			if (kk != 1) // 没以 endfunc 结束
 			{
-				printf("error! need 'endfunc'");
+				if(y==2)
+					printf("error! need 'endfunc'");
+				else
+				{
+					fp2 = fopen("out.txt","w");
+					fprintf(fp2,"error! need 'endfunc'");
+					fprintf(fp2,"\n");
+				}
 				kk = 1;
 			}
 		}
 	}
 	else
 	{
-		printf("error! need 'function'");
+		if(y==2)
+			printf("error! need 'function'");
+		else
+		{
+			fp2 = fopen("out.txt","w");
+			fprintf(fp2,"error! need 'endfunc'");
+			fprintf(fp2,"\n");
+		}
 		kk = 1;
 	}
 }
@@ -173,13 +199,27 @@ void statement()
 		}
 		else
 		{
-			printf("error! evaluate tag error!");
+			if(y==2)
+				printf("error! evaluate tag error!");
+			else
+			{
+				fp2 = fopen("out.txt","w");
+				fprintf(fp2,"error! evaluate tag error!");
+				fprintf(fp2,"\n");
+			}
 			kk = 1;
 		}
 	}
 	else
 	{
-		printf("error! the statement error!");
+		if(y==2)
+			printf("error! the statement error!");
+		else
+		{
+			fp2 = fopen("out.txt","w");
+			fprintf(fp2,"error! the statement error!");
+			fprintf(fp2,"\n");
+		}
 		kk = 1;
 	}
 }
@@ -222,28 +262,56 @@ void factor()   // 因子分析函数
 			}
 			else
 			{
-				printf("error! need another ')");
+				if(y==2)
+					printf("error! need another ')");
+				else
+				{
+					fp2 = fopen("out.txt","w");
+					fprintf(fp2,"error! need another ')");
+					fprintf(fp2,"\n");
+				}
 				kk = 1;
 			}
 		}
 		else
 		{
-			printf("error! expression error!");
+			if(y==2)
+				printf("error! expression error!");
+			else
+			{
+				fp2 = fopen("out.txt","w");
+				fprintf(fp2,"error! expression error!");
+				fprintf(fp2,"\n");
+			}
 		}
 	}
 }
 
-void main()
+int main()
 {
 	p = 0;
 	printf("\nplease input the string:\n");
-
-	do
+	printf("选择文件输入1,手动输入2\n");
+	int x;
+	cin>>x;
+	cout<<"选择文件输入1，控制台输入2"<<endl;
+	cin>>y;
+	if(x==1)
 	{
-		ch = getchar();
-		prog[p++] = ch;
-	} while (ch != '#');
-
+		fp1 = fopen("in.txt","r");
+		do {
+			fscanf(fp1, "%c", &ch);
+			prog[++p] = ch;
+		} while (ch != '#');
+	}
+	else
+	{
+		do
+		{
+			ch = getchar();
+			prog[p++] = ch;
+		} while (ch != '#');
+	}
 	p = 0;
 	ch = prog[p++];
 	scaner();
