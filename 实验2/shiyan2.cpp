@@ -30,7 +30,7 @@ void scaner()
 {
 	for (n = 0; n < 150; n++)
 		token[n] = NULL;
-	while (ch == ' ')
+	while (ch == ' '||ch == '\t'||ch == '\n')
 	{
 		ch = prog[p++];
 	}
@@ -183,12 +183,15 @@ void lrparser()
 			fprintf(fp2,"第 %d 行,有错误,缺少'function'\n",num);
 		}
 		kk = 1;
+		syn = 1;
+		lrparser();
 	}
 }
 
 void yucu() // 语句串分析
 {
-	statement();    // 调用语句分析函数
+	num++;
+	statement();// 调用语句分析函数
 	while (syn == 26)    // 一个语句识别结束，继续识别
 	{
 		num++;
@@ -206,15 +209,17 @@ void statement()
 		{
 			scaner();
 			expression();
+			//判断是否有分号
+
 		}
 		else//为什么不能变量后面跟着;
 		{
 			if(y==2)
-				printf("第 %d 行,有错误,缺少缺少变量\n",num);
+				printf("第 %d 行,有错误,缺少缺少等式\n",num);
 			else
 			{
 				fp2 = fopen("out.txt","w");
-				fprintf(fp2,"第 %d 行,有错误,缺少缺少变量\n",num);
+				fprintf(fp2,"第 %d 行,有错误,缺少等式\n",num);
 			}
 			kk = 1;
 		}
@@ -230,6 +235,7 @@ void statement()
 		}
 		kk = 1;
 	}
+
 }
 
 void expression()   // 表达式分析函数
