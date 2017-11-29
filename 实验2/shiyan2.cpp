@@ -12,10 +12,11 @@
 #include <cstdlib>
 #include <ctime>
 using namespace std;
-char prog[80], token[9];
+char prog[500], token[200];
 char ch;
 int syn, p, m = 0, n, sum, kk = 0;
 int y;
+int num=0;
 FILE* fp1, *fp2;
 char * rwtab[6] = { "function", "if", "then", "while", "do", "endfunc" };
 
@@ -27,10 +28,12 @@ void factor();
 
 void scaner()
 {
-	for (n = 0; n < 9; n++)
+	for (n = 0; n < 150; n++)
 		token[n] = NULL;
 	while (ch == ' ')
+	{
 		ch = prog[p++];
+	}
 	m = 0;
 	if ((ch <= 'z' && ch >= 'a') || (ch <= 'Z' && ch >= 'A'))
 	{
@@ -137,7 +140,7 @@ void scaner()
 
 void lrparser()
 {
-	if (syn == 1)
+	if (syn == 1)//判断是否有function作为整段程序的开始
 	{
 		scaner();
 		yucu();
@@ -145,19 +148,26 @@ void lrparser()
 		{
 			scaner();
 			if (syn == 0 && kk == 0)    // 程序分析识别完
-				printf("success");
+			{
+				if(y==2)
+					printf("编译成功");
+				else
+				{
+					fp2 = fopen("out.txt","w");
+					fprintf(fp2,"编译成功\n");
+				}
+			}
 		}
 		else
 		{
 			if (kk != 1) // 没以 endfunc 结束
 			{
 				if(y==2)
-					printf("error! need 'endfunc'");
+					printf("第 %d 行,有错误, 缺少 'endfunc'\n",num);
 				else
 				{
 					fp2 = fopen("out.txt","w");
-					fprintf(fp2,"error! need 'endfunc'");
-					fprintf(fp2,"\n");
+					fprintf(fp2,"第 %d 行,有错误, 缺少 'endfunc'\n",num);
 				}
 				kk = 1;
 			}
@@ -166,12 +176,11 @@ void lrparser()
 	else
 	{
 		if(y==2)
-			printf("error! need 'function'");
+			printf("第 %d 行,有错误,缺少'function'\n",num);
 		else
 		{
 			fp2 = fopen("out.txt","w");
-			fprintf(fp2,"error! need 'endfunc'");
-			fprintf(fp2,"\n");
+			fprintf(fp2,"第 %d 行,有错误,缺少'function'\n",num);
 		}
 		kk = 1;
 	}
@@ -182,6 +191,7 @@ void yucu() // 语句串分析
 	statement();    // 调用语句分析函数
 	while (syn == 26)    // 一个语句识别结束，继续识别
 	{
+		num++;
 		scaner();
 		statement();
 	}
@@ -189,36 +199,34 @@ void yucu() // 语句串分析
 
 void statement()
 {
-	if (syn == 10)
+	if (syn == 10)//如果是变量名字
 	{
 		scaner();
-		if (syn == 18)
+		if (syn == 18)//如果是=
 		{
 			scaner();
 			expression();
 		}
-		else
+		else//为什么不能变量后面跟着;
 		{
 			if(y==2)
-				printf("error! evaluate tag error!");
+				printf("第 %d 行,有错误,缺少缺少变量\n",num);
 			else
 			{
 				fp2 = fopen("out.txt","w");
-				fprintf(fp2,"error! evaluate tag error!");
-				fprintf(fp2,"\n");
+				fprintf(fp2,"第 %d 行,有错误,缺少缺少变量\n",num);
 			}
 			kk = 1;
 		}
 	}
-	else
+	else//输入的东西不是以变量名字打头
 	{
 		if(y==2)
-			printf("error! the statement error!");
+			printf("第 %d 行,有错误,缺少缺少变量\n",num);
 		else
 		{
 			fp2 = fopen("out.txt","w");
-			fprintf(fp2,"error! the statement error!");
-			fprintf(fp2,"\n");
+			fprintf(fp2,"第 %d 行,有错误,缺少缺少变量\n",num);
 		}
 		kk = 1;
 	}
@@ -227,7 +235,7 @@ void statement()
 void expression()   // 表达式分析函数
 {
 	term();
-	while (syn == 13 || syn == 14)
+	while (syn == 13 || syn == 14)//判断是+或者-
 	{
 		scaner();
 		term();
@@ -237,7 +245,7 @@ void expression()   // 表达式分析函数
 void term() // 项分析函数
 {
 	factor();
-	while (syn == 15 || syn == 16)
+	while (syn == 15 || syn == 16)//*或者/
 	{
 		scaner();
 		factor();
@@ -246,42 +254,40 @@ void term() // 项分析函数
 
 void factor()   // 因子分析函数
 {
-	if (syn == 10 || syn == 11)
+	if (syn == 10 || syn == 11)//=右边如果是字符串或者数字
 	{
 		scaner();
 	}
 	else// 看是否是表达式
 	{
-		if (syn == 27)
+		if (syn == 27)//如果是(
 		{
 			scaner();
 			expression();
-			if (syn == 28)
+			if (syn == 28)//如果是)
 			{
 				scaner();
 			}
 			else
 			{
 				if(y==2)
-					printf("error! need another ')");
+					printf("第 %d 行,有错误,缺少缺少')'\n",num);
 				else
 				{
 					fp2 = fopen("out.txt","w");
-					fprintf(fp2,"error! need another ')");
-					fprintf(fp2,"\n");
+					fprintf(fp2,"第 %d 行,有错误,缺少缺少')'\n",num);
 				}
 				kk = 1;
 			}
 		}
 		else
 		{
-			if(y==2)
-				printf("error! expression error!");
+			if(y==2)//??
+				printf("第 %d 行,缺少变量\n",num);
 			else
 			{
 				fp2 = fopen("out.txt","w");
-				fprintf(fp2,"error! expression error!");
-				fprintf(fp2,"\n");
+				fprintf(fp2,"第 %d 行,缺少变量\n",num);
 			}
 		}
 	}
@@ -315,7 +321,7 @@ int main()
 	p = 0;
 	ch = prog[p++];
 	scaner();
+	num++;
 	lrparser();
-
 	system("pause");
 }
