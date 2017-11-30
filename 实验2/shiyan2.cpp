@@ -15,6 +15,7 @@ using namespace std;
 char prog[500], token[200];
 char ch;
 int syn, p, m = 0, n, sum, kk = 0;
+int flag;
 int y;
 int num=0;
 FILE* fp1, *fp2;
@@ -28,7 +29,7 @@ void factor();
 
 void scaner()
 {
-	for (n = 0; n < 8; n++)
+	for (n = 0; n < 105; n++)
 		token[n] = NULL;
 	while (ch == ' '||ch == '\t'||ch == '\n')
 	{
@@ -213,6 +214,7 @@ void statement()
 {
 	if (syn == 10)//如果是变量名字
 	{
+		flag = 0;
 		scaner();
 		if (syn == 18)//如果是=
 		{
@@ -221,12 +223,78 @@ void statement()
 			//判断是否有分号
 			if(syn != 26)
 			{
-				if(y==2)
-					printf("第 %d 行,有错误,缺少';'或者操作符\n",num);
-				else
+				if (!flag)
 				{
-					fp2 = fopen("out.txt","w");
-					fprintf(fp2,"第 %d 行,有错误,缺少';' 或者操作符\n",num);
+					if (syn == -1)
+					{
+						if (y == 2)
+							printf("第 %d 行,错误输出\n", num);
+						else
+						{
+							fp2 = fopen("out.txt", "w");
+							fprintf(fp2, "第 %d 行,错误输出\n", num);
+						}
+					}
+					else if (syn == 28)
+					{
+						if (y == 2)
+							printf("第 %d 行,缺少'('\n", num);
+						else
+						{
+							fp2 = fopen("out.txt", "w");
+							fprintf(fp2, "第 %d 行,缺少'('\n", num);
+						}
+					}
+					else if (syn == 18)
+					{
+						if (y == 2)
+							printf("第 %d 行,出现多余'='\n", num);
+						else
+						{
+							fp2 = fopen("out.txt", "w");
+							fprintf(fp2, "第 %d 行,出现多余'='\n", num);
+						}
+					}
+					else if (syn == 22)
+					{
+						if (y == 2)
+							printf("第 %d 行,出现'!'错误\n", num);
+						else
+						{
+							fp2 = fopen("out.txt", "w");
+							fprintf(fp2, "第 %d 行,出现'!'错误\n", num);
+						}
+					}
+					else if (syn == 20)
+					{
+						if (y == 2)
+							printf("第 %d 行,出现'<'错误\n", num);
+						else
+						{
+							fp2 = fopen("out.txt", "w");
+							fprintf(fp2, "第 %d 行,出现'<'错误\n", num);
+						}
+					}
+					else if (syn == 23)
+					{
+						if (y == 2)
+							printf("第 %d 行,出现'<'错误\n", num);
+						else
+						{
+							fp2 = fopen("out.txt", "w");
+							fprintf(fp2, "第 %d 行,出现'<'错误\n", num);
+						}
+					}
+					else
+					{
+						if (y == 2)
+							printf("第 %d 行,有错误,缺少';'或者操作符\n", num);
+						else
+						{
+							fp2 = fopen("out.txt", "w");
+							fprintf(fp2, "第 %d 行,有错误,缺少';' 或者操作符\n", num);
+						}
+					}
 				}
 				kk = 1;	
 				if( syn != 6 && syn != 0)
@@ -295,6 +363,7 @@ void factor()   // 因子分析函数
 	}
 	else// 看是否是表达式
 	{
+		flag = 0;
 		if (syn == 27)//如果是(
 		{
 			scaner();
@@ -305,6 +374,7 @@ void factor()   // 因子分析函数
 			}
 			else
 			{
+				flag = 1;
 				if(y==2)
 					printf("第 %d 行,有错误,缺少')'\n",num);
 				else
@@ -317,12 +387,72 @@ void factor()   // 因子分析函数
 		}
 		else
 		{
-			if(y==2)//??
-				printf("第 %d 行,缺少变量\n",num);
-			else
+			flag = 0;
+			if (syn == -1)
 			{
-				fp2 = fopen("out.txt","w");
-				fprintf(fp2,"第 %d 行,缺少变量\n",num);
+				flag = 1;
+				if (y == 2)
+					printf("第 %d 行,错误输出\n", num);
+				else
+				{
+					fp2 = fopen("out.txt", "w");
+					fprintf(fp2, "第 %d 行,错误输出\n", num);
+				}
+			}
+			else if (syn == 28)
+			{
+				flag = 1;
+				if (y == 2)
+					printf("第 %d 行,缺少'('\n", num);
+				else
+				{
+					fp2 = fopen("out.txt", "w");
+					fprintf(fp2, "第 %d 行,缺少'('\n", num);
+				}
+			}
+			else if (syn == 18)
+			{
+				flag = 1;
+				if (y == 2)
+					printf("第 %d 行,出现多余'='\n", num);
+				else
+				{
+					fp2 = fopen("out.txt", "w");
+					fprintf(fp2, "第 %d 行,出现多余'='\n", num);
+				}
+			}
+			else if (syn == 22)
+			{
+				flag = 1;
+				if (y == 2)
+					printf("第 %d 行,出现'!'错误\n", num);
+				else
+				{
+					fp2 = fopen("out.txt", "w");
+					fprintf(fp2, "第 %d 行,出现'!'错误\n", num);
+				}
+			}
+			else if (syn == 20)
+			{
+				flag = 1;
+				if (y == 2)
+					printf("第 %d 行,出现'<'错误\n", num);
+				else
+				{
+					fp2 = fopen("out.txt", "w");
+					fprintf(fp2, "第 %d 行,出现'<'错误\n", num);
+				}
+			}
+			else if(syn == 23)
+			{
+				flag = 1;
+				if (y == 2)
+					printf("第 %d 行,出现'<'错误\n", num);
+				else
+				{
+					fp2 = fopen("out.txt", "w");
+					fprintf(fp2, "第 %d 行,出现'<'错误\n", num);
+				}
 			}
 		}
 	}
