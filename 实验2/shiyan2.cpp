@@ -138,50 +138,53 @@ void scaner()
 		ch = prog[p++];
 	}
 }
-
+void weibu()
+{
+	if (syn == 6)
+	{
+		scaner();
+		if (syn == 0 && kk == 0)    // 程序分析识别完
+		{
+			if (y == 2)
+				printf("编译成功\n");
+			else
+			{
+				fp2 = fopen("out.txt", "w");
+				fprintf(fp2, "编译成功\n");
+			}
+		}
+		else {
+			if (y == 2)
+				printf("编译失败\n");
+			else
+			{
+				fp2 = fopen("out.txt", "w");
+				fprintf(fp2, "编译失败\n");
+			}
+		}
+	}
+	else
+	{
+		//if (kk != 1)
+		//{
+			if (y == 2)
+				printf("第 %d 行,有错误, 缺少 'endfunc'\n", num);
+			else
+			{
+				fp2 = fopen("out.txt", "w");
+				fprintf(fp2, "第 %d 行,有错误, 缺少 'endfunc'\n", num);
+			}
+			kk = 1;
+		//}
+	}
+}
 void lrparser()
 {
 	if (syn == 1)//判断是否有function作为整段程序的开始
 	{
 		scaner();
 		yucu();
-		if (syn == 6)
-		{
-			scaner();
-			if (syn == 0 && kk == 0)    // 程序分析识别完
-			{
-				if(y==2)
-					printf("编译成功\n");
-				else
-				{
-					fp2 = fopen("out.txt","w");
-					fprintf(fp2,"编译成功\n");
-				}
-			}
-			else{
-				if(y==2)
-					printf("编译失败\n");
-				else
-				{
-					fp2 = fopen("out.txt","w");
-					fprintf(fp2,"编译失败\n");
-				}
-			}
-		}
-		else
-		{
-			if (kk != 1) // 没以 endfunc 结束
-			{
-				if(y==2)
-					printf("第 %d 行,有错误, 缺少 'endfunc'\n",num);
-				else
-				{
-					fp2 = fopen("out.txt","w");
-					fprintf(fp2,"第 %d 行,有错误, 缺少 'endfunc'\n",num);
-				}
-				kk = 1;
-			}
-		}
+		weibu();
 	}
 	else
 	{
@@ -193,8 +196,8 @@ void lrparser()
 			fprintf(fp2,"第 %d 行,有错误,缺少'function'\n",num);
 		}
 		kk = 1;
-		syn = 1;
-		lrparser();
+		yucu();
+		weibu();
 	}
 }
 
@@ -297,9 +300,9 @@ void statement()
 					}
 				}
 				kk = 1;	
-				if( syn != 6 && syn != 0)
+				if (syn != 6 && syn != 0)
 				{
-					while (syn != 26)    
+					while (syn != 26)
 					{
 						scaner();
 						expression();
@@ -310,16 +313,25 @@ void statement()
 		else//为什么不能变量后面跟着;
 		{
 			if(y==2)
-				printf("第 %d 行,有错误,缺少等式\n",num);
+				printf("第 %d 行,有错误,等式错误\n",num);
 			else
 			{
 				fp2 = fopen("out.txt","w");
-				fprintf(fp2,"第 %d 行,有错误,缺少等式\n",num);
+				fprintf(fp2,"第 %d 行,有错误,等式\n",num);
 			}
 			kk = 1;
+			if (syn != 6 && syn != 0)
+			{
+				while (syn != 26)
+				{
+					scaner();
+					expression();
+				}
+			}
 		}
+		
 	}
-	else//输入的东西不是以变量名字打头
+	else if(syn != 6&& syn!=0)//输入的东西不是以变量名字打头
 	{
 		if(y==2)
 			printf("第 %d 行,有错误,缺少变量\n",num);
@@ -371,6 +383,18 @@ void factor()   // 因子分析函数
 			if (syn == 28)//如果是)
 			{
 				scaner();
+			}
+			else if (syn == 27)
+			{
+				flag = 1;
+				if (y == 2)
+					printf("第 %d 行,有错误,出现多余'('\n", num);
+				else
+				{
+					fp2 = fopen("out.txt", "w");
+					fprintf(fp2, "第 %d 行,有错误,出现多余'（'\n", num);
+				}
+				kk = 1;
 			}
 			else
 			{
