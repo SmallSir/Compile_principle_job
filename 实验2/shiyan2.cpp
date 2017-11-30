@@ -150,11 +150,20 @@ void lrparser()
 			if (syn == 0 && kk == 0)    // 程序分析识别完
 			{
 				if(y==2)
-					printf("编译成功");
+					printf("编译成功\n");
 				else
 				{
 					fp2 = fopen("out.txt","w");
 					fprintf(fp2,"编译成功\n");
+				}
+			}
+			else{
+				if(y==2)
+					printf("编译失败\n");
+				else
+				{
+					fp2 = fopen("out.txt","w");
+					fprintf(fp2,"编译失败\n");
 				}
 			}
 		}
@@ -215,7 +224,7 @@ void statement()
 		else//为什么不能变量后面跟着;
 		{
 			if(y==2)
-				printf("第 %d 行,有错误,缺少缺少等式\n",num);
+				printf("第 %d 行,有错误,缺少等式\n",num);
 			else
 			{
 				fp2 = fopen("out.txt","w");
@@ -227,11 +236,11 @@ void statement()
 	else//输入的东西不是以变量名字打头
 	{
 		if(y==2)
-			printf("第 %d 行,有错误,缺少缺少变量\n",num);
+			printf("第 %d 行,有错误,缺少变量\n",num);
 		else
 		{
 			fp2 = fopen("out.txt","w");
-			fprintf(fp2,"第 %d 行,有错误,缺少缺少变量\n",num);
+			fprintf(fp2,"第 %d 行,有错误,缺少变量\n",num);
 		}
 		kk = 1;
 	}
@@ -277,11 +286,11 @@ void factor()   // 因子分析函数
 			else
 			{
 				if(y==2)
-					printf("第 %d 行,有错误,缺少缺少')'\n",num);
+					printf("第 %d 行,有错误,缺少')'\n",num);
 				else
 				{
 					fp2 = fopen("out.txt","w");
-					fprintf(fp2,"第 %d 行,有错误,缺少缺少')'\n",num);
+					fprintf(fp2,"第 %d 行,有错误,缺少')'\n",num);
 				}
 				kk = 1;
 			}
