@@ -28,7 +28,7 @@ void factor();
 
 void scaner()
 {
-	for (n = 0; n < 150; n++)
+	for (n = 0; n < 8; n++)
 		token[n] = NULL;
 	while (ch == ' '||ch == '\t'||ch == '\n')
 	{
@@ -219,7 +219,25 @@ void statement()
 			scaner();
 			expression();
 			//判断是否有分号
-
+			if(syn != 26)
+			{
+				if(y==2)
+					printf("第 %d 行,有错误,缺少';'或者操作符\n",num);
+				else
+				{
+					fp2 = fopen("out.txt","w");
+					fprintf(fp2,"第 %d 行,有错误,缺少';' 或者操作符\n",num);
+				}
+				kk = 1;	
+				if( syn != 6 && syn != 0)
+				{
+					while (syn != 26)    
+					{
+						scaner();
+						expression();
+					}
+				}
+			}
 		}
 		else//为什么不能变量后面跟着;
 		{
@@ -243,6 +261,8 @@ void statement()
 			fprintf(fp2,"第 %d 行,有错误,缺少变量\n",num);
 		}
 		kk = 1;
+		scaner();
+		expression();
 	}
 
 }
