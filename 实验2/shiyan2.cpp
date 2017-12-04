@@ -27,40 +27,183 @@ void expression();
 void term();
 void factor();
 
-void scaner()
+void check()
 {
-	for (n = 0; n < 105; n++)
-		token[n] = NULL;
-	while (ch == ' '||ch == '\t'||ch == '\n')
+	if((ch <= '9' && ch >= '1')||ch == '+'||ch == '-')
 	{
+		token[m++] = ch;
 		ch = prog[p++];
 	}
-	m = 0;
-	if ((ch <= 'z' && ch >= 'a') || (ch <= 'Z' && ch >= 'A'))
+	else
 	{
-		while ((ch <= 'z' && ch >= 'a') || (ch <= 'Z' && ch >= 'A') || (ch <= '9' && ch >= '0'))
+		syn = -1;
+		while((ch <= '9 '&& ch >= '0')||(ch <= 'z' && ch >= 'a')||ch == '.')
+		{
+			ch = prog[p++];
+		}
+		ch = prog[p--];
+		return;
+	}
+	while((ch <= '9' && ch >= '0')||ch == '.')
+	{
+		if(ch == '.')
+		{
+			syn = -1;
+			ch = prog[p++];
+			while((ch <= '9 '&& ch >= '0')||(ch <= 'z' && ch >= 'a')||ch == '.')
+			{
+				ch = prog[p++];
+			}
+			ch = prog[p--];
+			return;
+		}
+		else
 		{
 			token[m++] = ch;
 			ch = prog[p++];
 		}
-		syn = 10;
-		for (n = 0; n < 6; n++)
-			if (strcmp(token, rwtab[n]) == 0)
-			{
-				syn = n + 1;
-				break;
-			}
-		token[m++] = '\0';
 	}
-	else if (ch <= '9' && ch >= '0')
+	if(ch <= 'z' && ch >= 'a'||token[m-1] == '-'|| token[m-1] == '+')
 	{
-		sum = 0;
-		while (ch <= '9' && ch >= '0')
+		syn = -1;
+		ch = prog[p++];
+		while((ch <= '9 '&& ch >= '0')||(ch <= 'z' && ch >= 'a')||ch == '.')
 		{
-			sum = sum * 10 + ch - '0';
 			ch = prog[p++];
 		}
+		ch = prog[p--];
+		return;
+	}
+	ch = prog[p--];
+}
+void DFA()
+{
+
+	if(ch == '+' || ch == '-')
+	{
+		token[m++] = ch;
+		ch = prog[p++];
+	}
+	if(ch == '0')
+	{
+		if(prog[p+1] == '.')
+		{token[m++] = ch;
+			ch = prog[p++];
+			token[m++] = ch;
+			ch = prog[p++];
+		}
+		else
+		{
+			syn = -1;
+			ch = prog[p++];
+			while((ch <= '9 '&& ch >= '0')||(ch <= 'z' && ch >= 'a')||ch == '.')
+			{
+				ch = prog[p++];
+			}
+			ch = prog[p--];
+			return;
+		}
+	}	
+	while((ch <= '9' && ch >= '0')||ch == '.')
+	{
+		if(ch == '.')
+		{
+			if(flag)
+			{
+				syn = -1;
+				ch = prog[p++];
+				while((ch <= '9 '&& ch >= '0')||(ch <= 'z' && ch >= 'a')||ch == '.')
+				{
+					ch = prog[p++];
+				}
+				ch = prog[p--];
+				return;
+			}
+			else
+				flag = 1;
+		}
+		//cout<<endl<<"----"<<ch<<endl;
+		token[m++] = ch;
+		ch = prog[p++];
+		//cout<<endl<<"----"<<token<<endl;
+	}
+	if(ch == 'e')
+	{
+		if(token[m-1] == '.')
+		{
+			syn = -1;
+			while((ch <= '9 '&& ch >= '0')||(ch <= 'z' && ch >= 'a')||ch == '.')
+			{
+				ch = prog[p++];
+			}
+			ch = prog[p--];
+			return;
+		}
+		token[m++] = ch;
+		ch = prog[p++];
+		check();
+	}
+	else
+	{
+		if(token[m-1] == '.'||ch <= 'z' && ch >= 'a')
+		{
+			syn = -1;
+			while((ch <= '9 '&& ch >= '0')||(ch <= 'z' && ch >= 'a')||ch == '.')
+			{
+				ch = prog[p++];
+			}
+			ch = prog[p--];
+			return;
+		}
+		else
+		{
+			ch = prog[p--];
+			return;
+		}
+	}
+}
+void scaner()
+{
+	// 初始化 token 数组
+	int flow;
+	memset(token,0,sizeof(token));
+	// 跳过空格字符
+	ch = prog[p++];
+	while (ch == ' ' || ch == '\n' || ch == '\t') 
+	{
+		ch = prog[p++];
+	}
+	flow = 0;
+	// 读到了字母
+	//cout<<endl<<ch<<endl;
+	if (ch >= 'a' && ch <= 'z')
+	{
+		m = 0;
+		// 把所有字母读到 token 数组中
+		while((ch >= 'a' && ch <= 'z') ||( ch >= '0' && ch <= '9')||(ch>='A'&&ch<='Z'))
+		{
+			token[m++] = ch;
+			ch = prog[p++];
+		}
+
+		ch = prog[p--];
+		syn = 10;//若输出是10则是变量或是正整数
+		// 判断是否匹配关键字
+		for (n = 0; n < 6; n++)
+		{
+			if (strcmp(token, rwtab[n]) == 0)
+			{
+				syn = n + 1;//找到相应关键字
+				break;
+			}
+		}
+	}
+	else if (ch >= '0' && ch <= '9')
+	{
+		m=0;
+		flag = 0;
 		syn = 11;
+		DFA();	
 	}
 	else
 	{
@@ -72,8 +215,8 @@ void scaner()
 				ch = prog[p++];
 				if (ch == '=')
 				{
-					syn = 22;
-					token[m + 1] = ch;
+					syn = 21;
+					token[m ++] = ch;
 				}
 				else {
 					syn = 20;
@@ -96,7 +239,7 @@ void scaner()
 				}
 				break;
 			case'=':
-				m = 0;
+				m = 0; 
 				token[m++] = ch;
 				ch = prog[p++];
 				if (ch == '=')
@@ -124,18 +267,63 @@ void scaner()
 					syn = -1;
 				}
 				break;
-			case '+': syn = 13; token[0] = ch; break;
-			case '-': syn = 14; token[0] = ch; break;
-			case '*': syn = 15; token[0] = ch; break;
-			case '/': syn = 16; token[0] = ch; break;
-			case ';': syn = 26; token[0] = ch; break;
-			case '(': syn = 27; token[0] = ch; break;
-			case ')': syn = 28; token[0] = ch; break;
-			case '#': syn = 0; token[0] = ch; break;
+			case '+':
+				flow = syn;
+				syn = 13; 
+				m = 0;
+				token[m++] = ch;
+				ch = prog[p++];
+				flag = 0;
+				if(ch <= '9' && ch >= '0' && flow != 11 && flow != 10)
+				{
+					syn = 11;
+					DFA();
+				}
+				else
+					ch = prog[p--];
+				break;
+			case '-':
+				flow = syn;
+				syn = 14;
+				m = 0;
+				token[m++] = ch;
+				ch = prog[p++];
+				flag = 0;
+				if(ch <= '9' && ch >= '0' && flow != 11 && flow !=10)
+				{
+					syn = 11;
+					DFA();
+				}
+				else
+					ch = prog[p--];
+				break;
+			case '*': 
+				syn = 15; 
+				token[0] = ch; 
+				break;
+			case '/': 
+				syn = 16; 
+				token[0] = ch;
+				break;
+			case ';': 
+				syn = 26; 
+				token[0] = ch; 
+				break;
+			case '(': 
+				syn = 27; 
+				token[0] = ch; 
+				break;
+			case ')': 
+				syn = 28; 
+				token[0] = ch; 
+				break;
+			case '#': 
+				syn = 0; 
+				token[0] = ch;
+				break;
 			default:
-					  syn = -1;
+				syn = -1;
 		}
-		ch = prog[p++];
 	}
 }
 void weibu()
@@ -224,12 +412,13 @@ void statement()
 			scaner();
 			expression();
 			//判断是否有分号
-			if(syn != 26)
+			if (syn != 26)
 			{
 				if (!flag)
 				{
 					if (syn == -1)
 					{
+						scaner();
 						if (y == 2)
 							printf("第 %d 行,错误输出\n", num);
 						else
@@ -240,6 +429,7 @@ void statement()
 					}
 					else if (syn == 28)
 					{
+						scaner();
 						if (y == 2)
 							printf("第 %d 行,缺少'('\n", num);
 						else
@@ -250,6 +440,7 @@ void statement()
 					}
 					else if (syn == 18)
 					{
+						scaner();
 						if (y == 2)
 							printf("第 %d 行,出现多余'='\n", num);
 						else
@@ -260,6 +451,7 @@ void statement()
 					}
 					else if (syn == 22)
 					{
+						scaner();
 						if (y == 2)
 							printf("第 %d 行,出现'!'错误\n", num);
 						else
@@ -270,6 +462,7 @@ void statement()
 					}
 					else if (syn == 20)
 					{
+						scaner();
 						if (y == 2)
 							printf("第 %d 行,出现'<'错误\n", num);
 						else
@@ -280,6 +473,7 @@ void statement()
 					}
 					else if (syn == 23)
 					{
+						scaner();
 						if (y == 2)
 							printf("第 %d 行,出现'<'错误\n", num);
 						else
@@ -298,15 +492,11 @@ void statement()
 							fprintf(fp2, "第 %d 行,有错误,缺少';' 或者操作符\n", num);
 						}
 					}
+					kk = 1;
 				}
-				kk = 1;	
-				if (syn != 6 && syn != 0)
+				else if (syn != 6 && syn != 0 && syn != 26)
 				{
-					while (syn != 26)
-					{
-						scaner();
-						expression();
-					}
+					statement();
 				}
 			}
 		}
@@ -344,7 +534,8 @@ void statement()
 		scaner();
 		expression();
 	}
-
+	else
+		scaner();
 }
 
 void expression()   // 表达式分析函数
@@ -496,7 +687,7 @@ int main()
 		fp1 = fopen("in.txt","r");
 		do {
 			fscanf(fp1, "%c", &ch);
-			prog[++p] = ch;
+			prog[p++] = ch;
 		} while (ch != '#');
 	}
 	else
