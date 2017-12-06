@@ -23,7 +23,7 @@ struct quad
 	char ag2[12];
 }qua[30];
 char * expression(void);
-char prog[200], token[8];
+char prog[200], token[200];
 char ch;
 int flag;
 int cnt;
@@ -31,7 +31,7 @@ int syn, p, m, n, sum = 0;
 int kk = 0, k = 0;
 int x, y;
 FILE* fp1, *fp2;
-char *rwtab[6] = { "function","if","then","while","do","endfunc" };
+char * rwtab[6] = { "function", "if", "then", "while", "do", "endfunc" };
 
 void check()
 {
@@ -586,9 +586,9 @@ int main()
 			return 0;
 		default:
 			if (y == 2)
-				printf("%d-3d   %s\n", syn, token);
+				printf("%-3d   %s\n", syn, token);
 			else
-				fprintf(fp2, "%d-3d   %s\n", syn, token);
+				fprintf(fp2, "%-3d   %s\n", syn, token);
 		}
 	} while (syn != 0);
 	if (y == 2)
