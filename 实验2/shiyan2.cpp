@@ -338,7 +338,6 @@ void weibu()
 				printf("编译成功\n");
 			else
 			{
-				fp2 = fopen("out.txt", "w");
 				fprintf(fp2, "编译成功\n");
 			}
 		}
@@ -347,7 +346,6 @@ void weibu()
 				printf("编译失败\n");
 			else
 			{
-				fp2 = fopen("out.txt", "w");
 				fprintf(fp2, "编译失败\n");
 			}
 		}
@@ -360,7 +358,6 @@ void weibu()
 			printf("第 %d 行,有错误, 缺少 'endfunc'\n", num);
 		else
 		{
-			fp2 = fopen("out.txt", "w");
 			fprintf(fp2, "第 %d 行,有错误, 缺少 'endfunc'\n", num);
 		}
 		kk = 1;
@@ -381,7 +378,6 @@ void lrparser()
 			printf("第 %d 行,有错误,缺少'function'\n", num);
 		else
 		{
-			fp2 = fopen("out.txt", "w");
 			fprintf(fp2, "第 %d 行,有错误,缺少'function'\n", num);
 		}
 		kk = 1;
@@ -427,7 +423,6 @@ void statement()
 							printf("第 %d 行,错误输出\n", num);
 						else
 						{
-							fp2 = fopen("out.txt", "w");
 							fprintf(fp2, "第 %d 行,错误输出\n", num);
 						}
 					}
@@ -438,7 +433,6 @@ void statement()
 							printf("第 %d 行,缺少'('\n", num);
 						else
 						{
-							fp2 = fopen("out.txt", "w");
 							fprintf(fp2, "第 %d 行,缺少'('\n", num);
 						}
 					}
@@ -449,7 +443,6 @@ void statement()
 							printf("第 %d 行,出现多余'='\n", num);
 						else
 						{
-							fp2 = fopen("out.txt", "w");
 							fprintf(fp2, "第 %d 行,出现多余'='\n", num);
 						}
 					}
@@ -460,7 +453,6 @@ void statement()
 							printf("第 %d 行,出现'!'错误\n", num);
 						else
 						{
-							fp2 = fopen("out.txt", "w");
 							fprintf(fp2, "第 %d 行,出现'!'错误\n", num);
 						}
 					}
@@ -471,7 +463,6 @@ void statement()
 							printf("第 %d 行,出现'<'错误\n", num);
 						else
 						{
-							fp2 = fopen("out.txt", "w");
 							fprintf(fp2, "第 %d 行,出现'<'错误\n", num);
 						}
 					}
@@ -482,7 +473,6 @@ void statement()
 							printf("第 %d 行,出现'<'错误\n", num);
 						else
 						{
-							fp2 = fopen("out.txt", "w");
 							fprintf(fp2, "第 %d 行,出现'<'错误\n", num);
 						}
 					}
@@ -492,7 +482,6 @@ void statement()
 							printf("第 %d 行,有错误,缺少';'或者操作符\n", num);
 						else
 						{
-							fp2 = fopen("out.txt", "w");
 							fprintf(fp2, "第 %d 行,有错误,缺少';' 或者操作符\n", num);
 						}
 					}
@@ -508,7 +497,6 @@ void statement()
 							printf("第 %d 行,有错误,缺少';'或者操作符\n", num);
 						else
 						{
-							fp2 = fopen("out.txt", "w");
 							fprintf(fp2, "第 %d 行,有错误,缺少';' 或者操作符\n", num);
 						}
 						break;
@@ -525,7 +513,6 @@ void statement()
 					printf("第 %d 行,缺少等号\n", num);
 				else
 				{
-					fp2 = fopen("out.txt", "w");
 					fprintf(fp2, "第 %d 行,缺少等号\n", num);
 				}
 			}
@@ -543,7 +530,6 @@ void statement()
 							printf("第 %d 行,有错误,缺少';'或者操作符\n", num);
 						else
 						{
-							fp2 = fopen("out.txt", "w");
 							fprintf(fp2, "第 %d 行,有错误,缺少';' 或者操作符\n", num);
 						}
 					}
@@ -561,7 +547,6 @@ void statement()
 				printf("第 %d 行,有错误,缺少变量\n", num);
 			else
 			{
-				fp2 = fopen("out.txt", "w");
 				fprintf(fp2, "第 %d 行,有错误,缺少变量\n", num);
 			}
 			flag = 1;
@@ -619,7 +604,6 @@ void factor()   // 因子分析函数
 						printf("第 %d 行,有错误,出现多余'('\n", num);
 					else
 					{
-						fp2 = fopen("out.txt", "w");
 						fprintf(fp2, "第 %d 行,有错误,出现多余'（'\n", num);
 					}
 					flag = 1;
@@ -635,7 +619,6 @@ void factor()   // 因子分析函数
 						printf("第 %d 行,有错误,缺少')'\n", num);
 					else
 					{
-						fp2 = fopen("out.txt", "w");
 						fprintf(fp2, "第 %d 行,有错误,缺少')'\n", num);
 					}
 					flag = 1;
@@ -653,7 +636,6 @@ void factor()   // 因子分析函数
 						printf("第 %d 行,错误输出\n", num);
 					else
 					{
-						fp2 = fopen("out.txt", "w");
 						fprintf(fp2, "第 %d 行,错误输出\n", num);
 					}
 					flag = 1;
@@ -668,7 +650,6 @@ void factor()   // 因子分析函数
 						printf("第 %d 行,缺少'('\n", num);
 					else
 					{
-						fp2 = fopen("out.txt", "w");
 						fprintf(fp2, "第 %d 行,缺少'('\n", num);
 					}
 				}
@@ -682,7 +663,6 @@ void factor()   // 因子分析函数
 						printf("第 %d 行,出现多余'='\n", num);
 					else
 					{
-						fp2 = fopen("out.txt", "w");
 						fprintf(fp2, "第 %d 行,出现多余'='\n", num);
 					}
 				}
@@ -696,7 +676,6 @@ void factor()   // 因子分析函数
 						printf("第 %d 行,出现'!'错误\n", num);
 					else
 					{
-						fp2 = fopen("out.txt", "w");
 						fprintf(fp2, "第 %d 行,出现'!'错误\n", num);
 					}
 				}
@@ -710,7 +689,6 @@ void factor()   // 因子分析函数
 						printf("第 %d 行,出现'<'错误\n", num);
 					else
 					{
-						fp2 = fopen("out.txt", "w");
 						fprintf(fp2, "第 %d 行,出现'<'错误\n", num);
 					}
 				}
@@ -724,7 +702,6 @@ void factor()   // 因子分析函数
 						printf("第 %d 行,出现'<'错误\n", num);
 					else
 					{
-						fp2 = fopen("out.txt", "w");
 						fprintf(fp2, "第 %d 行,出现'<'错误\n", num);
 					}
 				}
@@ -742,6 +719,8 @@ int main()
 	cin >> x;
 	cout << "选择文件输入1，控制台输入2" << endl;
 	cin >> y;
+	if(y == 1)
+		fp2 = fopen("out.txt", "w");
 	if (x == 1)
 	{
 		fp1 = fopen("in.txt", "r");
