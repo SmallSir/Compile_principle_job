@@ -210,7 +210,14 @@ void scaner()
 		m = 0;
 		flag = 0;
 		syn = 11;
-		DFA();
+		//DFA();
+		sum = 0;
+		while (ch >= '0'&&ch <= '9')
+		{
+			sum = sum * 10 + ch - '0';
+			ch = prog[p++];
+		}
+		p--;
 	}
 	else
 	{
@@ -357,7 +364,7 @@ char * factor(void)
 {
 	char * fplace;
 	fplace = (char*)malloc(12);
-	strcpy(fplace, " ");
+	strcpy(fplace, "");
 	if (syn == 10)
 	{
 		strcpy(fplace, token);
