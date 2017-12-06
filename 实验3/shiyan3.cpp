@@ -10,6 +10,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
+#pragma warning(disable:4996)
 using namespace std;
 typedef long long LL;
 
@@ -28,68 +29,211 @@ int flag;
 int cnt;
 int syn, p, m, n, sum = 0;
 int kk = 0, k = 0;
-int x,y;
+int x, y;
 FILE* fp1, *fp2;
 char *rwtab[6] = { "function","if","then","while","do","endfunc" };
 
-void scaner()
+void check()
 {
-	m = 0;
-	for (n = 0; n< 8; n++)
-		token[n] = '\0';
-	ch = prog[p++];
-	while (ch == ' ')
-		ch = prog[p++];
-	if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z'))
+	if ((ch <= '9' && ch >= '1') || ch == '+' || ch == '-')
 	{
-		while ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'z') || (ch >= '0'&&ch <= '9'))
+		token[m++] = ch;
+		ch = prog[p++];
+	}
+	else
+	{
+		syn = -1;
+		while ((ch <= '9 '&& ch >= '0') || (ch <= 'z' && ch >= 'a') || ch == '.')
+		{
+			ch = prog[p++];
+		}
+		ch = prog[p--];
+		return;
+	}
+	while ((ch <= '9' && ch >= '0') || ch == '.')
+	{
+		if (ch == '.')
+		{
+			syn = -1;
+			ch = prog[p++];
+			while ((ch <= '9 '&& ch >= '0') || (ch <= 'z' && ch >= 'a') || ch == '.')
+			{
+				ch = prog[p++];
+			}
+			ch = prog[p--];
+			return;
+		}
+		else
 		{
 			token[m++] = ch;
 			ch = prog[p++];
 		}
-		token[m++] = '\0';
-		p--;
-		syn = 10;
-		for (n = 0; n<6; n++)
-		{
-			if (strcmp(token, rwtab[n]) == 0)
-				syn = n + 1;
-			break;
-		}
 	}
-	else if (ch >= '0'&&ch <= '9')
+	if (ch <= 'z' && ch >= 'a' || token[m - 1] == '-' || token[m - 1] == '+')
 	{
-		sum = 0;
-		while (ch >= '0' &&ch <= '9')
+		syn = -1;
+		ch = prog[p++];
+		while ((ch <= '9 '&& ch >= '0') || (ch <= 'z' && ch >= 'a') || ch == '.')
 		{
-			sum = sum * 10 + ch - '0';
 			ch = prog[p++];
 		}
-		p--;
-		syn = 11;
+		ch = prog[p--];
+		return;
+	}
+	ch = prog[p--];
+}
+void DFA()
+{
+
+	if (ch == '+' || ch == '-')
+	{
+		token[m++] = ch;
+		ch = prog[p++];
+	}
+	if (ch == '0')
+	{
+		if (prog[p + 1] == '.')
+		{
+			token[m++] = ch;
+			ch = prog[p++];
+			token[m++] = ch;
+			ch = prog[p++];
+		}
+		else
+		{
+			syn = -1;
+			ch = prog[p++];
+			while ((ch <= '9 '&& ch >= '0') || (ch <= 'z' && ch >= 'a') || ch == '.')
+			{
+				ch = prog[p++];
+			}
+			ch = prog[p--];
+			return;
+		}
+	}
+	while ((ch <= '9' && ch >= '0') || ch == '.')
+	{
+		if (ch == '.')
+		{
+			if (flag)
+			{
+				syn = -1;
+				ch = prog[p++];
+				while ((ch <= '9 '&& ch >= '0') || (ch <= 'z' && ch >= 'a') || ch == '.')
+				{
+					ch = prog[p++];
+				}
+				ch = prog[p--];
+				return;
+			}
+			else
+				flag = 1;
+		}
+		//cout<<endl<<"----"<<ch<<endl;
+		token[m++] = ch;
+		ch = prog[p++];
+		//cout<<endl<<"----"<<token<<endl;
+	}
+	if (ch == 'e')
+	{
+		if (token[m - 1] == '.')
+		{
+			syn = -1;
+			while ((ch <= '9 '&& ch >= '0') || (ch <= 'z' && ch >= 'a') || ch == '.')
+			{
+				ch = prog[p++];
+			}
+			ch = prog[p--];
+			return;
+		}
+		token[m++] = ch;
+		ch = prog[p++];
+		check();
 	}
 	else
+	{
+		if (token[m - 1] == '.' || ch <= 'z' && ch >= 'a')
+		{
+			syn = -1;
+			while ((ch <= '9 '&& ch >= '0') || (ch <= 'z' && ch >= 'a') || ch == '.')
+			{
+				ch = prog[p++];
+			}
+			ch = prog[p--];
+			return;
+		}
+		else
+		{
+			ch = prog[p--];
+			return;
+		}
+	}
+}
+void scaner()
+{
+	// 初始化 token 数组
+	int flow;
+	memset(token, 0, sizeof(token));
+	// 跳过空格字符
+	ch = prog[p++];
+	while (ch == ' ' || ch == '\n' || ch == '\t')
+	{
+		ch = prog[p++];
+	}
+	flow = 0;
+	// 读到了字母
+	//cout<<endl<<ch<<endl;
+	if (ch >= 'a' && ch <= 'z')
+	{
+		m = 0;
+		// 把所有字母读到 token 数组中
+		while ((ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9') || (ch >= 'A'&&ch <= 'Z'))
+		{
+			token[m++] = ch;
+			ch = prog[p++];
+		}
+
+		ch = prog[p--];
+		syn = 10;//若输出是10则是变量或是正整数
+				 // 判断是否匹配关键字
+		for (n = 0; n < 6; n++)
+		{
+			if (strcmp(token, rwtab[n]) == 0)
+			{
+				syn = n + 1;//找到相应关键字
+				break;
+			}
+		}
+	}
+	else if (ch >= '0' && ch <= '9')
+	{
+		m = 0;
+		flag = 0;
+		syn = 11;
+		DFA();
+	}
+	else
+	{
 		switch (ch)
 		{
-		case '<':
+		case'<':
 			m = 0;
 			token[m++] = ch;
 			ch = prog[p++];
 			if (ch == '=')
 			{
-				syn = 22;
-				token[m + 1] = ch;
+				syn = 21;
+				token[m++] = ch;
 			}
-			else
-			{
+			else {
 				syn = 20;
-				ch = prog[--p];
+				ch = prog[p--];
 			}
 			break;
-		case '>':
+		case'>':
 			m = 0;
 			token[m++] = ch;
-			ch = prog[++p];
+			ch = prog[p++];
 			if (ch == '=')
 			{
 				syn = 24;
@@ -98,13 +242,13 @@ void scaner()
 			else
 			{
 				syn = 23;
-				ch = prog[--p];
+				ch = prog[p--];
 			}
 			break;
-		case '=':
+		case'=':
 			m = 0;
 			token[m++] = ch;
-			ch = prog[++p];
+			ch = prog[p++];
 			if (ch == '=')
 			{
 				syn = 25;
@@ -113,31 +257,81 @@ void scaner()
 			else
 			{
 				syn = 18;
-				ch = prog[--p];
+				ch = prog[p--];
 			}
 			break;
 		case '!':
 			m = 0;
 			token[m++] = ch;
-			ch = prog[++p];
+			ch = prog[p++];
 			if (ch == '=')
 			{
 				syn = 22;
 				token[m++] = ch;
 			}
 			else
+			{
 				syn = -1;
+			}
 			break;
-		case '+':syn = 13; token[0] = ch; break;
-		case '-':syn = 14; token[0] = ch; break;
-		case '*':syn = 15; token[0] = ch; break;
-		case '/':syn = 16; token[0] = ch; break;
-		case ';':syn = 26; token[0] = ch; break;
-		case '(':syn = 27; token[0] = ch; break;
-		case ')':syn = 28; token[0] = ch; break;
-		case '#':syn = 0; token[0] = ch; break;
-		default:syn = -1;
+		case '+':
+			flow = syn;
+			syn = 13;
+			m = 0;
+			token[m++] = ch;
+			ch = prog[p++];
+			flag = 0;
+			if (ch <= '9' && ch >= '0' && flow != 11 && flow != 10)
+			{
+				syn = 11;
+				DFA();
+			}
+			else
+				ch = prog[p--];
+			break;
+		case '-':
+			flow = syn;
+			syn = 14;
+			m = 0;
+			token[m++] = ch;
+			ch = prog[p++];
+			flag = 0;
+			if (ch <= '9' && ch >= '0' && flow != 11 && flow != 10)
+			{
+				syn = 11;
+				DFA();
+			}
+			else
+				ch = prog[p--];
+			break;
+		case '*':
+			syn = 15;
+			token[0] = ch;
+			break;
+		case '/':
+			syn = 16;
+			token[0] = ch;
+			break;
+		case ';':
+			syn = 26;
+			token[0] = ch;
+			break;
+		case '(':
+			syn = 27;
+			token[0] = ch;
+			break;
+		case ')':
+			syn = 28;
+			token[0] = ch;
+			break;
+		case '#':
+			syn = 0;
+			token[0] = ch;
+			break;
+		default:
+			syn = -1;
 		}
+	}
 }
 void emit(char * result, char * ag1, char * op, char * ag2)
 {
@@ -182,19 +376,19 @@ char * factor(void)
 			scaner();
 		else
 		{
-			if(y == 2)
+			if (y == 2)
 				printf("\n')'错误");
 			else
-				fprintf(fp2,"\n')'错误");
+				fprintf(fp2, "\n')'错误");
 			kk = 1;
 		}
 	}
 	else
 	{
-		if(y ==2)
+		if (y == 2)
 			printf("\n'('错误");
 		else
-			fprintf(fp2,"\n'('错误");
+			fprintf(fp2, "\n'('错误");
 		kk = 1;
 	}
 	return(fplace);
@@ -261,7 +455,7 @@ int statement()
 	int schain = 0;
 	switch (syn)
 	{
-	case 10:
+	case 10://判断到是变量
 		strcpy(tt, token);
 		scaner();
 		if (syn == 18)
@@ -273,10 +467,10 @@ int statement()
 		}
 		else
 		{
-			if(y==2)
+			if (y == 2)
 				printf("\n缺少赋值号\n");
 			else
-				fprintf(fp2,"\n缺少赋值号\n");
+				fprintf(fp2, "\n缺少赋值号\n");
 			kk = 1;
 		}
 		break;
@@ -312,30 +506,30 @@ int lrparser()
 			scaner();
 			if (syn == 0 && kk == 0)
 			{
-				if(y == 2)
+				if (y == 2)
 					printf("\n语法,语义分析成功");
 				else
-					fprintf(fp2,"\n语法,语义分析成功");
+					fprintf(fp2, "\n语法,语义分析成功");
 			}
 		}
 		else
 		{
 			if (kk != 1)
 			{
-				if(y == 2)
+				if (y == 2)
 					printf("\n缺endfunc\n");
 				else
-					fprintf(fp2,"\n缺endfunc\n");
+					fprintf(fp2, "\n缺endfunc\n");
 				kk = 1;
 			}
 		}
 	}
 	else
 	{
-		if(y == 2)
+		if (y == 2)
 			printf("\n缺function\n");
 		else
-			fprintf(fp2,"\n缺function\n");
+			fprintf(fp2, "\n缺function\n");
 		kk = 1;
 	}
 	return (schain);
@@ -350,7 +544,7 @@ int main()
 	cout << "选择文件输入1，控制台输入2" << endl;
 	cin >> y;
 	printf("请输入语句\n");
-	if(y == 1)
+	if (y == 1)
 		fp2 = fopen("out.txt", "w");
 	if (x == 1)
 	{
@@ -360,39 +554,47 @@ int main()
 			prog[p++] = ch;
 		} while (ch != '#');
 	}
+	else
+	{
+		do
+		{
+			ch = getchar();
+			prog[p++] = ch;
+		} while (ch != '#');
+	}
 	p = 0;
-	if(y==2)
+	if (y == 2)
 		printf("种别码      单词符号\n");
 	else
-		fprintf(fp2,"种别码      单词符号\n");
+		fprintf(fp2, "种别码      单词符号\n");
 	do
 	{
 		scaner();
 		switch (syn)
 		{
 		case 11:
-			if(y == 2)
+			if (y == 2)
 				printf("%-3d     %d\n", syn, sum);
 			else
 				fprintf(fp2, "%-3d     %d\n", syn, sum);
 			break;
 		case -1:
-			if(y == 2)
+			if (y == 2)
 				printf("词法分析失败，程序终止! \n");
 			else
-				fprintf(fp2,"词法分析失败，程序终止! \n");
+				fprintf(fp2, "词法分析失败，程序终止! \n");
 			return 0;
 		default:
-			if(y == 2)
+			if (y == 2)
 				printf("%d-3d   %s\n", syn, token);
 			else
-				fprintf(fp2,"%d-3d   %s\n", syn, token);
+				fprintf(fp2, "%d-3d   %s\n", syn, token);
 		}
 	} while (syn != 0);
-	if(y==2)
+	if (y == 2)
 		printf("词法分析成功，按任意键进行语法，语义分析");
 	else
-		fprintf(fp2,"词法分析成功，按任意键进行语法，语义分析");
+		fprintf(fp2, "词法分析成功，按任意键进行语法，语义分析");
 
 	getchar();
 	p = 0;
@@ -400,30 +602,31 @@ int main()
 	lrparser();
 	if (kk != 0)
 	{
-		if(y==2)
+		if (y == 2)
 			printf("语法分析失败，程序终止!");
 		else
-			fprintf(fp2,"词法分析成功，按任意键进行语法，语义分析");
+			fprintf(fp2, "词法分析成功，按任意键进行语法，语义分析");
 		return 0;
 	}
-	if(y == 2)
+	if (y == 2)
 		printf("\n三地址指令如下:\n");
 	else
-		fprintf(fp2,"\n三地址指令如下:\n");	
+		fprintf(fp2, "\n三地址指令如下:\n");
 	for (i = 0; i<cnt; i++)
 	{
-		if(y == 2)
-		{printf("%s=", qua[i].result);
-		printf("%s", qua[i].ag1);
-		printf("%s", qua[i].op);
-		printf("%s\n", qua[i].ag2);
+		if (y == 2)
+		{
+			printf("%s=", qua[i].result);
+			printf("%s", qua[i].ag1);
+			printf("%s", qua[i].op);
+			printf("%s\n", qua[i].ag2);
 		}
 		else
 		{
-			fprintf(fp2,"%s=", qua[i].result);	
-			fprintf(fp2,"%s", qua[i].ag1);	
-			fprintf(fp2,"%s", qua[i].op);	
-			fprintf(fp2,"%s\n", qua[i].ag2);	
+			fprintf(fp2, "%s=", qua[i].result);
+			fprintf(fp2, "%s", qua[i].ag1);
+			fprintf(fp2, "%s", qua[i].op);
+			fprintf(fp2, "%s\n", qua[i].ag2);
 		}
 	}
 	getchar();
