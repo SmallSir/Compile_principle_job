@@ -325,7 +325,7 @@ void scaner()
 				token[m++] = ch;
 				ch = prog[++p];
 				flag = 0;
-				if(ch <= '9' && ch >= '0' && flow != 11 && flow != 10)
+				if(ch <= '9' && ch >= '0' && flow != 11 && flow != 10 syn !=28)
 				{
 					syn = 11;
 					DFA();
