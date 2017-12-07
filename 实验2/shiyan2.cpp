@@ -275,7 +275,7 @@ void scaner()
 			token[m++] = ch;
 			ch = prog[p++];
 			flag = 0;
-			if (ch <= '9' && ch >= '0' && flow != 11 && flow != 10)
+			if (ch <= '9' && ch >= '0' && flow != 11 && flow != 10 && flow !=28)
 			{
 				syn = 11;
 				DFA();
@@ -397,6 +397,8 @@ void yucu() // 语句串分析
 		flag = 0;
 		num++;
 		scaner();
+		if (syn == 6 || syn == 0)
+			break;
 		statement();
 	}
 }
@@ -487,21 +489,7 @@ void statement()
 					}
 					kk = 1;
 				}
-				while (syn != 26)
-				{
-					scaner();
-					expression();
-					if (syn != 6 && syn != 0 && syn!= 26 && syn != 18)
-					{
-						if (y == 2)
-							printf("第 %d 行,有错误,缺少';'或者操作符\n", num);
-						else
-						{
-							fprintf(fp2, "第 %d 行,有错误,缺少';' 或者操作符\n", num);
-						}
-						break;
-					}
-				}
+				
 			}
 		}
 		else
@@ -517,29 +505,9 @@ void statement()
 				}
 			}
 			kk = 1;
-			while (syn != 26)
-			{
-				scaner();
-				expression();
-				if (syn != 6 && syn != 0 && syn!=26 && syn != 18)
-				{
-					if (flag == 0)
-					{
-						flag = 1;
-						if (y == 2)
-							printf("第 %d 行,有错误,缺少';'或者操作符\n", num);
-						else
-						{
-							fprintf(fp2, "第 %d 行,有错误,缺少';' 或者操作符\n", num);
-						}
-					}
-					break;
-				}
-			}
 		}
-
 	}
-	else if (syn != 6 && syn != 0)//输入的东西不是以变量名字打头
+	else//输入的东西不是以变量名字打头
 	{
 		if (flag == 0)
 		{
@@ -552,11 +520,12 @@ void statement()
 			flag = 1;
 		}
 		kk = 1;
-		scaner();
-		expression();
 	}
-	else
+		//scaner();
+	while (syn != 26 && syn != 0 && syn != 6)
+	{
 		scaner();
+	}
 }
 
 void expression()   // 表达式分析函数
@@ -610,6 +579,20 @@ void factor()   // 因子分析函数
 				}
 				kk = 1;
 			}
+			/*else if (syn == 10 || syn == 11)
+			{
+				if (flag == 0)
+				{
+					if (y == 2)
+						printf("第 %d 行,缺少操作符或者缺少';'\n", num);
+					else
+					{
+						fprintf(fp2, "第 %d 行,缺少操作符或者缺少';' \n", num);
+					}
+					flag = 1;
+				}
+				kk = 1;
+			}*/
 			else
 			{
 				//flag = 1;
@@ -628,82 +611,14 @@ void factor()   // 因子分析函数
 		}
 		else
 		{
-			if (syn == -1)
+			if (flag == 0)
 			{
-				if (flag == 0)
+				flag = 1;
+				if (y == 2)
+					printf("第 %d 行,缺少操作数\n", num);
+				else
 				{
-					if (y == 2)
-						printf("第 %d 行,错误输出\n", num);
-					else
-					{
-						fprintf(fp2, "第 %d 行,错误输出\n", num);
-					}
-					flag = 1;
-				}
-			}
-			else if (syn == 28)
-			{
-				if (flag == 0)
-				{
-					flag = 1;
-					if (y == 2)
-						printf("第 %d 行,缺少'('\n", num);
-					else
-					{
-						fprintf(fp2, "第 %d 行,缺少'('\n", num);
-					}
-				}
-			}
-			else if (syn == 18)
-			{
-				if (flag == 0)
-				{
-					flag = 1;
-					if (y == 2)
-						printf("第 %d 行,出现多余'='\n", num);
-					else
-					{
-						fprintf(fp2, "第 %d 行,出现多余'='\n", num);
-					}
-				}
-			}
-			else if (syn == 22)
-			{
-				if (flag == 0)
-				{
-					flag = 1;
-					if (y == 2)
-						printf("第 %d 行,出现'!'错误\n", num);
-					else
-					{
-						fprintf(fp2, "第 %d 行,出现'!'错误\n", num);
-					}
-				}
-			}
-			else if (syn == 20)
-			{
-				if (flag == 0)
-				{
-					flag = 1;
-					if (y == 2)
-						printf("第 %d 行,出现'<'错误\n", num);
-					else
-					{
-						fprintf(fp2, "第 %d 行,出现'<'错误\n", num);
-					}
-				}
-			}
-			else if (syn == 23)
-			{
-				if (flag == 0)
-				{
-					flag = 1;
-					if (y == 2)
-						printf("第 %d 行,出现'<'错误\n", num);
-					else
-					{
-						fprintf(fp2, "第 %d 行,出现'<'错误\n", num);
-					}
+					fprintf(fp2, "第 %d 行,缺少操作数\n", num);
 				}
 			}
 		}
@@ -719,7 +634,7 @@ int main()
 	cin >> x;
 	cout << "选择文件输入1，控制台输入2" << endl;
 	cin >> y;
-	if(y == 1)
+	if (y == 1)
 		fp2 = fopen("out.txt", "w");
 	if (x == 1)
 	{
@@ -741,6 +656,7 @@ int main()
 	ch = prog[p++];
 	scaner();
 	num++;
+
 	lrparser();
 	system("pause");
 }
