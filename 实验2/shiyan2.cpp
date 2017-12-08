@@ -275,7 +275,7 @@ void scaner()
 			token[m++] = ch;
 			ch = prog[p++];
 			flag = 0;
-			if (ch <= '9' && ch >= '0' && flow != 11 && flow != 10 && flow !=28)
+			if (ch <= '9' && ch >= '0' && flow != 11 && flow != 10 && flow != 28)
 			{
 				syn = 11;
 				DFA();
@@ -489,7 +489,7 @@ void statement()
 					}
 					kk = 1;
 				}
-				
+
 			}
 		}
 		else
@@ -521,7 +521,7 @@ void statement()
 		}
 		kk = 1;
 	}
-		//scaner();
+	//scaner();
 	while (syn != 26 && syn != 0 && syn != 6)
 	{
 		scaner();
@@ -581,17 +581,17 @@ void factor()   // 因子分析函数
 			}
 			/*else if (syn == 10 || syn == 11)
 			{
-				if (flag == 0)
-				{
-					if (y == 2)
-						printf("第 %d 行,缺少操作符或者缺少';'\n", num);
-					else
-					{
-						fprintf(fp2, "第 %d 行,缺少操作符或者缺少';' \n", num);
-					}
-					flag = 1;
-				}
-				kk = 1;
+			if (flag == 0)
+			{
+			if (y == 2)
+			printf("第 %d 行,缺少操作符或者缺少';'\n", num);
+			else
+			{
+			fprintf(fp2, "第 %d 行,缺少操作符或者缺少';' \n", num);
+			}
+			flag = 1;
+			}
+			kk = 1;
 			}*/
 			else
 			{
@@ -611,6 +611,16 @@ void factor()   // 因子分析函数
 		}
 		else
 		{
+			if (flag == 0 && syn == -1)
+			{
+				flag = 1;
+				if (y == 2)
+					printf("第 %d 行,实数错误\n", num);
+				else
+				{
+					fprintf(fp2, "第 %d 行,实数错误\n", num);
+				}
+			}
 			if (flag == 0)
 			{
 				flag = 1;
@@ -653,7 +663,7 @@ int main()
 		} while (ch != '#');
 	}
 	p = 0;
-	ch = prog[p++];
+	//ch = prog[p++];
 	scaner();
 	num++;
 
