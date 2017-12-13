@@ -179,6 +179,8 @@ void scaner()
 	ch = prog[p++];
 	while (ch == ' ' || ch == '\n' || ch == '\t')
 	{
+		if (ch == '\n')
+			num++;
 		ch = prog[p++];
 	}
 	flow = 0;
@@ -618,13 +620,13 @@ int statement()
 int yucu()
 {
 	flag = 0;
-	num++;
+	//num++;
 	int schain = 0;
 	schain = statement();
 	while (syn == 26)
 	{
 		flag = 0;
-		num++;
+		//num++;
 		scaner();
 		if (syn == 6 || syn == 0)
 			break;
@@ -640,7 +642,7 @@ int lrparser()
 	kk = 0;
 	if (syn == 1)
 	{
-		num++;
+		//num++;
 		scaner();
 		schain = yucu();
 		if (syn == 6)
@@ -675,7 +677,7 @@ int lrparser()
 			fprintf(fp2, "第 %d 行,有错误,缺少'function'\n", num);
 		}
 		kk = 1;
-		num--;
+		//num--;
 		yucu();
 		syn = -1;
 	}
@@ -757,6 +759,7 @@ int main()
 	}
 	getchar();
 	p = 0;
+	num = 0;
 	scaner();
 	lrparser();
 	if (kk != 0)
