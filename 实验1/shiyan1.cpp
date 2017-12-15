@@ -143,6 +143,11 @@ void DFA()
 			token[m++] = ch;
 			ch = prog[++p];
 		}
+		else if(prog[p+1] == ')')
+		{
+			token[m++] = ch;
+			ch = prog[++p];
+		}
 		else
 		{
 			syn = -1;

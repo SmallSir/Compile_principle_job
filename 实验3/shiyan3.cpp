@@ -25,7 +25,7 @@ struct quad
 char * expression(void);
 char prog[200], token[200];
 char ch;
-int flag;
+int flag,flag_number;
 int cnt;
 int num;
 int syn, p, m, n, sum = 0;
@@ -93,14 +93,7 @@ void DFA()
 	}
 	if (ch == '0')
 	{
-		if (prog[p + 1] == '.')
-		{
-			token[m++] = ch;
-			ch = prog[p++];
-			token[m++] = ch;
-			ch = prog[p++];
-		}
-		else
+		if (prog[p] <= '9'&&prog[p] >= '0')
 		{
 			syn = -1;
 			ch = prog[p++];
@@ -111,12 +104,17 @@ void DFA()
 			ch = prog[p--];
 			return;
 		}
+		else
+		{
+			token[m++] = ch;
+			ch = prog[p++];
+		}
 	}
 	while ((ch <= '9' && ch >= '0') || ch == '.')
 	{
 		if (ch == '.')
 		{
-			if (flag)
+			if (flag_number)
 			{
 				syn = -1;
 				ch = prog[p++];
@@ -128,7 +126,7 @@ void DFA()
 				return;
 			}
 			else
-				flag = 1;
+				flag_number = 1;
 		}
 		//cout<<endl<<"----"<<ch<<endl;
 		token[m++] = ch;
@@ -198,7 +196,7 @@ void scaner()
 
 		ch = prog[p--];
 		syn = 10;//若输出是10则是变量或是正整数
-		// 判断是否匹配关键字
+				 // 判断是否匹配关键字
 		for (n = 0; n < 6; n++)
 		{
 			if (strcmp(token, rwtab[n]) == 0)
@@ -211,135 +209,135 @@ void scaner()
 	else if (ch >= '0' && ch <= '9')
 	{
 		m = 0;
-		flag = 0;
+		flag_number = 0;
 		syn = 11;
 		DFA();
 		sum = 0;
 		/*while (ch >= '0'&&ch <= '9')
-		  {
-		  sum = sum * 10 + ch - '0';
-		  ch = prog[p++];
-		  }*/
+		{
+		sum = sum * 10 + ch - '0';
+		ch = prog[p++];
+		}*/
 		//p--;
 	}
 	else
 	{
 		switch (ch)
 		{
-			case'<':
-				m = 0;
+		case'<':
+			m = 0;
+			token[m++] = ch;
+			ch = prog[p++];
+			if (ch == '=')
+			{
+				syn = 21;
 				token[m++] = ch;
-				ch = prog[p++];
-				if (ch == '=')
-				{
-					syn = 21;
-					token[m++] = ch;
-				}
-				else {
-					syn = 20;
-					ch = prog[p--];
-				}
-				break;
-			case'>':
-				m = 0;
+			}
+			else {
+				syn = 20;
+				ch = prog[p--];
+			}
+			break;
+		case'>':
+			m = 0;
+			token[m++] = ch;
+			ch = prog[p++];
+			if (ch == '=')
+			{
+				syn = 24;
 				token[m++] = ch;
-				ch = prog[p++];
-				if (ch == '=')
-				{
-					syn = 24;
-					token[m++] = ch;
-				}
-				else
-				{
-					syn = 23;
-					ch = prog[p--];
-				}
-				break;
-			case'=':
-				m = 0;
+			}
+			else
+			{
+				syn = 23;
+				ch = prog[p--];
+			}
+			break;
+		case'=':
+			m = 0;
+			token[m++] = ch;
+			ch = prog[p++];
+			if (ch == '=')
+			{
+				syn = 25;
 				token[m++] = ch;
-				ch = prog[p++];
-				if (ch == '=')
-				{
-					syn = 25;
-					token[m++] = ch;
-				}
-				else
-				{
-					syn = 18;
-					ch = prog[p--];
-				}
-				break;
-			case '!':
-				m = 0;
+			}
+			else
+			{
+				syn = 18;
+				ch = prog[p--];
+			}
+			break;
+		case '!':
+			m = 0;
+			token[m++] = ch;
+			ch = prog[p++];
+			if (ch == '=')
+			{
+				syn = 22;
 				token[m++] = ch;
-				ch = prog[p++];
-				if (ch == '=')
-				{
-					syn = 22;
-					token[m++] = ch;
-				}
-				else
-				{
-					syn = -1;
-				}
-				break;
-			case '+':
-				flow = syn;
-				syn = 13;
-				m = 0;
-				token[m++] = ch;
-				ch = prog[p++];
-				flag = 0;
-				if (ch <= '9' && ch >= '0' && flow != 11 && flow != 10 && flow != 28)
-				{
-					syn = 11;
-					DFA();
-				}
-				else
-					ch = prog[p--];
-				break;
-			case '-':
-				flow = syn;
-				syn = 14;
-				m = 0;
-				token[m++] = ch;
-				ch = prog[p++];
-				flag = 0;
-				if (ch <= '9' && ch >= '0' && flow != 11 && flow != 10 && flow != 28)
-				{
-					syn = 11;
-					DFA();
-				}
-				else
-					ch = prog[p--];
-				break;
-			case '*':
-				syn = 15;
-				token[0] = ch;
-				break;
-			case '/':
-				syn = 16;
-				token[0] = ch;
-				break;
-			case ';':
-				syn = 26;
-				token[0] = ch;
-				break;
-			case '(':
-				syn = 27;
-				token[0] = ch;
-				break;
-			case ')':
-				syn = 28;
-				token[0] = ch;
-				break;
-			case '#':
-				syn = 0;
-				token[0] = ch;
-				break;
-			default:
+			}
+			else
+			{
 				syn = -1;
+			}
+			break;
+		case '+':
+			flow = syn;
+			syn = 13;
+			m = 0;
+			token[m++] = ch;
+			ch = prog[p++];
+			flag = 0;
+			if (ch <= '9' && ch >= '0' && flow != 11 && flow != 10 && flow != 28)
+			{
+				syn = 11;
+				DFA();
+			}
+			else
+				ch = prog[p--];
+			break;
+		case '-':
+			flow = syn;
+			syn = 14;
+			m = 0;
+			token[m++] = ch;
+			ch = prog[p++];
+			flag = 0;
+			if (ch <= '9' && ch >= '0' && flow != 11 && flow != 10 && flow != 28)
+			{
+				syn = 11;
+				DFA();
+			}
+			else
+				ch = prog[p--];
+			break;
+		case '*':
+			syn = 15;
+			token[0] = ch;
+			break;
+		case '/':
+			syn = 16;
+			token[0] = ch;
+			break;
+		case ';':
+			syn = 26;
+			token[0] = ch;
+			break;
+		case '(':
+			syn = 27;
+			token[0] = ch;
+			break;
+		case ')':
+			syn = 28;
+			token[0] = ch;
+			break;
+		case '#':
+			syn = 0;
+			token[0] = ch;
+			break;
+		default:
+			syn = -1;
 		}
 	}
 }
@@ -569,10 +567,10 @@ int statement()
 					else
 					{
 						if (y == 2)
-							printf("第 %d 行,有错误,缺少';'或者操作符\n", num);
+							printf("第 %d 行,有错误,缺少';'或者操作符\n", num - 1);
 						else
 						{
-							fprintf(fp2, "第 %d 行,有错误,缺少';' 或者操作符\n", num);
+							fprintf(fp2, "第 %d 行,有错误,缺少';' 或者操作符\n", num - 1);
 						}
 					}
 					kk = 1;
@@ -597,7 +595,7 @@ int statement()
 	}
 	else//输入的东西不是以变量名字打头
 	{
-		if (flag == 0)
+		if (flag == 0 && syn != 26)
 		{
 			if (y == 2)
 				printf("第 %d 行,有错误,缺少变量\n", num);
@@ -606,8 +604,9 @@ int statement()
 				fprintf(fp2, "第 %d 行,有错误,缺少变量\n", num);
 			}
 			flag = 1;
+			kk = 1;
 		}
-		kk = 1;
+		
 	}
 	//scaner();
 	while (syn != 26 && syn != 0 && syn != 6)
@@ -712,7 +711,7 @@ int main()
 		} while (ch != '#');
 	}
 	p = 0;
-	int uu=0;
+	int uu = 0;
 	if (y == 2)
 		printf("种别码      单词符号\n");
 	else
@@ -722,27 +721,27 @@ int main()
 		scaner();
 		switch (syn)
 		{
-			case 11:
-				if (y == 2)
-					printf("%-3d     %s\n", syn, token);
-				else
-					fprintf(fp2, "%-3d     %s\n", syn, token);
-				break;
-			case -1:
-				uu = 1;
-				if (y == 2)
-					printf("error     %s\n", token);
-				else
-					fprintf(fp2, "error     %s\n", token);
-				getchar();
-			default:
-				if (y == 2)
-					printf("%-3d   %s\n", syn, token);
-				else
-					fprintf(fp2, "%-3d   %s\n", syn, token);
+		case 11:
+			if (y == 2)
+				printf("%-3d     %s\n", syn, token);
+			else
+				fprintf(fp2, "%-3d     %s\n", syn, token);
+			break;
+		case -1:
+			uu = 1;
+			if (y == 2)
+				printf("error     %s\n", token);
+			else
+				fprintf(fp2, "error     %s\n", token);
+			getchar();
+		default:
+			if (y == 2)
+				printf("%-3d   %s\n", syn, token);
+			else
+				fprintf(fp2, "%-3d   %s\n", syn, token);
 		}
 	} while (syn != 0);
-	if(uu == 0)
+	if (uu == 0)
 	{
 		if (y == 2)
 			printf("词法分析成功，按任意键进行语法，语义分析");
