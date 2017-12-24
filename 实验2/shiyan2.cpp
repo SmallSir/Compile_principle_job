@@ -32,16 +32,16 @@ void check()
 	if ((ch <= '9' && ch >= '1') || ch == '+' || ch == '-')
 	{
 		token[m++] = ch;
-		ch = prog[p++];
+		ch = prog[++p];
 	}
 	else
 	{
 		syn = -1;
 		while ((ch <= '9 '&& ch >= '0') || (ch <= 'z' && ch >= 'a') || ch == '.')
 		{
-			ch = prog[p++];
+			ch = prog[++p];
 		}
-		ch = prog[p--];
+		ch = prog[--p];
 		return;
 	}
 	while ((ch <= '9' && ch >= '0') || ch == '.')
@@ -49,32 +49,32 @@ void check()
 		if (ch == '.')
 		{
 			syn = -1;
-			ch = prog[p++];
+			ch = prog[++p];
 			while ((ch <= '9 '&& ch >= '0') || (ch <= 'z' && ch >= 'a') || ch == '.')
 			{
-				ch = prog[p++];
+				ch = prog[++p];
 			}
-			ch = prog[p--];
+			ch = prog[--p];
 			return;
 		}
 		else
 		{
 			token[m++] = ch;
-			ch = prog[p++];
+			ch = prog[++p];
 		}
 	}
 	if (ch <= 'z' && ch >= 'a' || token[m - 1] == '-' || token[m - 1] == '+')
 	{
 		syn = -1;
-		ch = prog[p++];
+		ch = prog[++p];
 		while ((ch <= '9 '&& ch >= '0') || (ch <= 'z' && ch >= 'a') || ch == '.')
 		{
-			ch = prog[p++];
+			ch = prog[++p];
 		}
-		ch = prog[p--];
+		ch = prog[--p];
 		return;
 	}
-	ch = prog[p--];
+	ch = prog[--p];
 }
 void DFA()
 {
@@ -82,26 +82,31 @@ void DFA()
 	if (ch == '+' || ch == '-')
 	{
 		token[m++] = ch;
-		ch = prog[p++];
+		ch = prog[++p];
 	}
 	if (ch == '0')
 	{
 		if (prog[p + 1] == '.')
 		{
 			token[m++] = ch;
-			ch = prog[p++];
+			ch = prog[++p];
 			token[m++] = ch;
-			ch = prog[p++];
+			ch = prog[++p];
+		}
+		else if (prog[p + 1] == ')')
+		{
+			token[m++] = ch;
+			ch = prog[++p];
 		}
 		else
 		{
 			syn = -1;
-			ch = prog[p++];
+			ch = prog[++p];
 			while ((ch <= '9 '&& ch >= '0') || (ch <= 'z' && ch >= 'a') || ch == '.')
 			{
-				ch = prog[p++];
+				ch = prog[++p];
 			}
-			ch = prog[p--];
+			ch = prog[--p];
 			return;
 		}
 	}
@@ -112,12 +117,12 @@ void DFA()
 			if (flag)
 			{
 				syn = -1;
-				ch = prog[p++];
+				ch = prog[++p];
 				while ((ch <= '9 '&& ch >= '0') || (ch <= 'z' && ch >= 'a') || ch == '.')
 				{
-					ch = prog[p++];
+					ch = prog[++p];
 				}
-				ch = prog[p--];
+				ch = prog[--p];
 				return;
 			}
 			else
@@ -125,7 +130,7 @@ void DFA()
 		}
 		//cout<<endl<<"----"<<ch<<endl;
 		token[m++] = ch;
-		ch = prog[p++];
+		ch = prog[++p];
 		//cout<<endl<<"----"<<token<<endl;
 	}
 	if (ch == 'e')
@@ -135,13 +140,13 @@ void DFA()
 			syn = -1;
 			while ((ch <= '9 '&& ch >= '0') || (ch <= 'z' && ch >= 'a') || ch == '.')
 			{
-				ch = prog[p++];
+				ch = prog[++p];
 			}
-			ch = prog[p--];
+			ch = prog[--p];
 			return;
 		}
 		token[m++] = ch;
-		ch = prog[p++];
+		ch = prog[++p];
 		check();
 	}
 	else
@@ -151,14 +156,14 @@ void DFA()
 			syn = -1;
 			while ((ch <= '9 '&& ch >= '0') || (ch <= 'z' && ch >= 'a') || ch == '.')
 			{
-				ch = prog[p++];
+				ch = prog[++p];
 			}
-			ch = prog[p--];
+			ch = prog[--p];
 			return;
 		}
 		else
 		{
-			ch = prog[p--];
+			ch = prog[--p];
 			return;
 		}
 	}
@@ -169,10 +174,10 @@ void scaner()
 	int flow;
 	memset(token, 0, sizeof(token));
 	// 跳过空格字符
-	ch = prog[p++];
+	ch = prog[++p];
 	while (ch == ' ' || ch == '\n' || ch == '\t')
 	{
-		ch = prog[p++];
+		ch = prog[++p];
 	}
 	flow = 0;
 	// 读到了字母
@@ -184,10 +189,10 @@ void scaner()
 		while ((ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9') || (ch >= 'A'&&ch <= 'Z'))
 		{
 			token[m++] = ch;
-			ch = prog[p++];
+			ch = prog[++p];
 		}
 
-		ch = prog[p--];
+		ch = prog[--p];
 		syn = 10;//若输出是10则是变量或是正整数
 				 // 判断是否匹配关键字
 		for (n = 0; n < 6; n++)
@@ -213,7 +218,7 @@ void scaner()
 		case'<':
 			m = 0;
 			token[m++] = ch;
-			ch = prog[p++];
+			ch = prog[++p];
 			if (ch == '=')
 			{
 				syn = 21;
@@ -221,13 +226,13 @@ void scaner()
 			}
 			else {
 				syn = 20;
-				ch = prog[p--];
+				ch = prog[--p];
 			}
 			break;
 		case'>':
 			m = 0;
 			token[m++] = ch;
-			ch = prog[p++];
+			ch = prog[++p];
 			if (ch == '=')
 			{
 				syn = 24;
@@ -236,13 +241,13 @@ void scaner()
 			else
 			{
 				syn = 23;
-				ch = prog[p--];
+				ch = prog[--p];
 			}
 			break;
 		case'=':
 			m = 0;
 			token[m++] = ch;
-			ch = prog[p++];
+			ch = prog[++p];
 			if (ch == '=')
 			{
 				syn = 25;
@@ -251,13 +256,13 @@ void scaner()
 			else
 			{
 				syn = 18;
-				ch = prog[p--];
+				ch = prog[--p];
 			}
 			break;
 		case '!':
 			m = 0;
 			token[m++] = ch;
-			ch = prog[p++];
+			ch = prog[++p];
 			if (ch == '=')
 			{
 				syn = 22;
@@ -273,30 +278,30 @@ void scaner()
 			syn = 13;
 			m = 0;
 			token[m++] = ch;
-			ch = prog[p++];
+			ch = prog[++p];
 			flag = 0;
-			if (ch <= '9' && ch >= '0' && flow != 11 && flow != 10 && flow != 28)
+			if (ch <= '9' && ch >= '0' && flow != 11 && flow != 10 && syn != 28)
 			{
 				syn = 11;
 				DFA();
 			}
 			else
-				ch = prog[p--];
+				ch = prog[--p];
 			break;
 		case '-':
 			flow = syn;
 			syn = 14;
 			m = 0;
 			token[m++] = ch;
-			ch = prog[p++];
+			ch = prog[++p];
 			flag = 0;
-			if (ch <= '9' && ch >= '0' && flow != 11 && flow != 10 && flow != 28)
+			if (ch <= '9' && ch >= '0' && flow != 11 && flow != 10 && syn != 28)
 			{
 				syn = 11;
 				DFA();
 			}
 			else
-				ch = prog[p--];
+				ch = prog[--p];
 			break;
 		case '*':
 			syn = 15;
