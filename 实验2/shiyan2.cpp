@@ -394,7 +394,7 @@ void lrparser()
 			fprintf(fp2, "第 %d 行,有错误,缺少'function'\n", num);
 		}
 		kk = 1;
-		num--;
+		//num--;
 		yucu();
 		weibu();
 	}
@@ -403,7 +403,7 @@ void lrparser()
 void yucu() // 语句串分析
 {
 	flag = 0;
-	num++;
+	//num++;
 	statement();// 调用语句分析函数
 	while (syn == 26)    // 一个语句识别结束，继续识别
 	{
