@@ -175,9 +175,17 @@ void scaner()
 	memset(token, 0, sizeof(token));
 	// 跳过空格字符
 	ch = prog[++p];
-	while (ch == ' ' || ch == '\n' || ch == '\t')
+	while (ch == ' ' || ch == '\t')
 	{
 		ch = prog[++p];
+	}
+	if (ch == '\n')
+	{
+		token[m++] = ch;
+
+		syn = 26;
+		num++;
+		return;
 	}
 	flow = 0;
 	// 读到了字母
@@ -400,7 +408,7 @@ void yucu() // 语句串分析
 	while (syn == 26)    // 一个语句识别结束，继续识别
 	{
 		flag = 0;
-		num++;
+		//num++;
 		scaner();
 		if (syn == 6 || syn == 0)
 			break;
@@ -419,7 +427,7 @@ void statement()
 			scaner();
 			expression();
 			//判断是否有分号
-			if (syn != 26)
+			if (syn != 26|| (syn ==26 && ch == '\n'))
 			{
 				if (!flag)
 				{
@@ -486,10 +494,10 @@ void statement()
 					else
 					{
 						if (y == 2)
-							printf("第 %d 行,有错误,缺少';'或者操作符\n", num);
+							printf("第 %d 行,有错误,缺少';'或者操作符\n", num-1);
 						else
 						{
-							fprintf(fp2, "第 %d 行,有错误,缺少';' 或者操作符\n", num);
+							fprintf(fp2, "第 %d 行,有错误,缺少';' 或者操作符\n", num-1);
 						}
 					}
 					kk = 1;
@@ -512,7 +520,7 @@ void statement()
 			kk = 1;
 		}
 	}
-	else//输入的东西不是以变量名字打头
+	else if(syn != 26)//输入的东西不是以变量名字打头
 	{
 		if (flag == 0)
 		{
